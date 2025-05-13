@@ -1,4 +1,4 @@
-import Calendar from "./Calendar";
+import Calendar from "../Calendar/Calendar";
 
 const PopNewCard = () => {
   return (

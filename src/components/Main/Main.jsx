@@ -1,5 +1,5 @@
-import Card from "./Card";
-import Column from "./Column";
+import Card from "../Card/Card";
+import Column from "../Column/Column";
 
 const Main = () => {
   return (
@@ -13,7 +13,7 @@ const Main = () => {
               </div>
               <Card />
             </div>
-            <Column text='Нужно сделать'/>
+            <Column text="Нужно сделать" />
             <div class="main__column">
               <div class="column__title">
                 <p>В работе</p>

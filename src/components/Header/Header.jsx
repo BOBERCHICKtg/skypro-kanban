@@ -1,5 +1,5 @@
 import { useState } from "react";
-import PopUser from "./PopUser";
+import PopUser from "../PopUser/PopUser";
 
 const Header = () => {
   const [isUserPopupVisible, setUserPopupVisible] = useState(false);

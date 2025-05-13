@@ -1,7 +1,7 @@
 import "./App.css";
-import Header from "./components/Header";
-import Main from "./components/Main";
-import PopNewCard from "./components/PopNewCard";
+import Header from "./components/Header/Header";
+import Main from "./components/Main/Main";
+import PopNewCard from "./components/PopNewCard/PopNewCard";
 
 function App() {
   return (
