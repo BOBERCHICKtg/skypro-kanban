@@ -1,6 +1,7 @@
 import "./App.css";
 import Header from "./components/Header/Header";
 import Main from "./components/Main/Main";
+import PopBrowse from "./components/PopBrowse/PopBrowse";
 import PopNewCard from "./components/PopNewCard/PopNewCard";
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         </div>
       </div>
       <PopNewCard />
+      <PopBrowse />
       <Header />
       <Main />
     </div>
