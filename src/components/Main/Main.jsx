@@ -1,9 +1,16 @@
 import Card from "../Card/Card";
 import Column from "../Column/Column";
 
-const Main = () => {
+const Main = ({ loading }) => {
   return (
     <main className="main">
+      {!loading && (
+        <div className="loading-message">
+          <p>Загружаю задачи...</p>
+        </div>
+      )}
+      
+      {loading && (
       <div className="container">
         <div className="main__block">
           <div className="main__content">
@@ -11,7 +18,7 @@ const Main = () => {
               <div className="column__title">
                 <p>Без статуса</p>
               </div>
-              <Card />
+              <Card loading={loading} />
             </div>
             <Column text="Нужно сделать" />
             <div className="main__column">
@@ -300,6 +307,7 @@ const Main = () => {
           </div>
         </div>
       </div>
+      )}
     </main>
   );
 };

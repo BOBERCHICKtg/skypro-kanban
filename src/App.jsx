@@ -3,8 +3,17 @@ import Header from "./components/Header/Header";
 import Main from "./components/Main/Main";
 import PopBrowse from "./components/PopBrowse/PopBrowse";
 import PopNewCard from "./components/PopNewCard/PopNewCard";
+import { useEffect, useState } from "react";
 
 function App() {
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(true);
+    }, 3000);
+  }, []);
+
   return (
     <div className="wrapper">
       <div className="pop-exit" id="popExit">
@@ -29,7 +38,7 @@ function App() {
       <PopNewCard />
       <PopBrowse />
       <Header />
-      <Main />
+      <Main loading={loading} />
     </div>
   );
 }
