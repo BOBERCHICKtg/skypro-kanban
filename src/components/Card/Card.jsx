@@ -1,9 +1,18 @@
 import CardItem from "./CardItem";
 import CardList from "../CardList";
+import styled from "styled-components";
+
+const Cards = styled.div`
+  .cards {
+    width: 100%;
+    display: block;
+    position: relative;
+  }
+`;
 
 const Card = () => {
   return (
-    <div className="cards">
+    <Cards>
       {CardList.map((card) => (
         <CardItem
           key={card.id}
@@ -13,7 +22,7 @@ const Card = () => {
           status={card.status}
         />
       ))}
-    </div>
+    </Cards>
   );
 };
 

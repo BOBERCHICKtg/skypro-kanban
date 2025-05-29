@@ -284,6 +284,8 @@ body {
 }
 
 .pop-user-set button {
+  width: 72px;
+  height: 30px;
   background: transparent;
   color: #565EEF;
   border-radius: 4px;
@@ -817,6 +819,7 @@ body {
 
 .header__btn-main-new {
   width: 178px;
+  height: 30px;
   border-radius: 4px;
   background-color: #565EEF;
   color: #FFFFFF;
@@ -860,6 +863,8 @@ body {
   position: absolute;
   top: 61px;
   right: 0;
+  width: 213px;
+  height: 205px;
   border-radius: 10px;
   border: 0.7px solid rgba(148, 166, 190, 0.4);
   background: #FFF;
