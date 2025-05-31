@@ -1,23 +1,136 @@
-import {
-  CalendarContainer,
-  CalendarTitle,
-  CalendarBlock,
-  CalendarNav,
-  CalendarMonth,
-  NavActions,
-  NavAction,
-  CalendarContent,
-  DaysNames,
-  DayName,
-  Cells,
-  Cell,
-  OtherMonthCell,
-  ActiveDayCell,
-  CurrentCell,
-  CalendarPeriod,
-  CalendarText,
-  HiddenInput,
-} from "./Calendar.styled";
+import styled from "styled-components";
+
+const CalendarContainer = styled.div`
+  margin-bottom: 20px;
+`;
+
+const CalendarTitle = styled.p`
+  margin-bottom: 14px;
+  padding: 0 7px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+`;
+
+const CalendarBlock = styled.div`
+  display: block;
+`;
+
+const CalendarNav = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 0 7px;
+`;
+
+const CalendarMonth = styled.div`
+  color: #94a6be;
+  font-size: 14px;
+  line-height: 25px;
+  font-weight: 600;
+`;
+
+const NavActions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const NavAction = styled.div`
+  width: 18px;
+  height: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    fill: #94a6be;
+  }
+`;
+
+const CalendarContent = styled.div`
+  margin-bottom: 12px;
+`;
+
+const DaysNames = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  margin: 7px 0;
+  padding: 0 7px;
+`;
+
+const DayName = styled.div`
+  color: #94a6be;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.2px;
+`;
+
+const Cells = styled.div`
+  width: 182px;
+  height: 126px;
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const Cell = styled.div`
+  width: 22px;
+  height: 22px;
+  margin: 2px;
+  border-radius: 50%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  color: #94a6be;
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: -0.2px;
+  cursor: pointer;
+
+  &:hover {
+    color: #94a6be;
+    background-color: #eaeef6;
+  }
+`;
+
+const OtherMonthCell = styled(Cell)`
+  opacity: 0;
+`;
+
+const ActiveDayCell = styled(Cell)`
+  background-color: #94a6be;
+  color: #ffffff;
+`;
+
+const CurrentCell = styled(Cell)`
+  font-weight: 700;
+`;
+
+const CalendarPeriod = styled.div`
+  padding: 0 7px;
+`;
+
+const CalendarText = styled.p`
+  color: #94a6be;
+  font-size: 10px;
+  line-height: 1;
+
+  span {
+    color: #000000;
+  }
+`;
+
+const HiddenInput = styled.input`
+  display: none;
+`;
 
 const Calendar = () => {
   return (
@@ -56,8 +169,8 @@ const Calendar = () => {
             <DayName>ср</DayName>
             <DayName>чт</DayName>
             <DayName>пт</DayName>
-            <DayName c>сб</DayName>
-            <DayName c>вс</DayName>
+            <DayName className="-weekend-">сб</DayName>
+            <DayName className="-weekend-">вс</DayName>
           </DaysNames>
           <Cells>
             <OtherMonthCell>28</OtherMonthCell>
@@ -65,43 +178,43 @@ const Calendar = () => {
             <OtherMonthCell>30</OtherMonthCell>
             <Cell>31</Cell>
             <Cell>1</Cell>
-            <Cell>2</Cell>
-            <Cell>3</Cell>
+            <Cell className="_weekend">2</Cell>
+            <Cell className="_weekend">3</Cell>
             <Cell>4</Cell>
             <Cell>5</Cell>
             <Cell>6</Cell>
             <Cell>7</Cell>
             <CurrentCell>8</CurrentCell>
-            <ActiveDayCell>9</ActiveDayCell>
-            <Cell>10</Cell>
+            <ActiveDayCell className="_weekend">9</ActiveDayCell>
+            <Cell className="_weekend">10</Cell>
             <Cell>11</Cell>
             <Cell>12</Cell>
             <Cell>13</Cell>
             <Cell>14</Cell>
             <Cell>15</Cell>
-            <Cell>16</Cell>
-            <Cell>17</Cell>
+            <Cell className="_weekend">16</Cell>
+            <Cell className="_weekend">17</Cell>
             <Cell>18</Cell>
             <Cell>19</Cell>
             <Cell>20</Cell>
             <Cell>21</Cell>
             <Cell>22</Cell>
-            <Cell>23</Cell>
-            <Cell>24</Cell>
+            <Cell className="_weekend">23</Cell>
+            <Cell className="_weekend">24</Cell>
             <Cell>25</Cell>
             <Cell>26</Cell>
             <Cell>27</Cell>
             <Cell>28</Cell>
             <Cell>29</Cell>
-            <Cell>30</Cell>
-            <OtherMonthCell>1</OtherMonthCell>
+            <Cell className="_weekend">30</Cell>
+            <OtherMonthCell className="_weekend">1</OtherMonthCell>
           </Cells>
         </CalendarContent>
 
         <HiddenInput type="hidden" id="datepick_value" value="08.09.2023" />
         <CalendarPeriod>
           <CalendarText>
-            Срок исполнения: <span>09.09.23</span>
+            Срок исполнения: <span className="date-control">09.09.23</span>
           </CalendarText>
         </CalendarPeriod>
       </CalendarBlock>
