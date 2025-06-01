@@ -1,14 +1,6 @@
 import CardItem from "./CardItem";
 import CardList from "../CardList";
-import styled from "styled-components";
-
-const Cards = styled.div`
-  .cards {
-    width: 100%;
-    display: block;
-    position: relative;
-  }
-`;
+import { Cards } from "./Card.styles";
 
 const Card = () => {
   return (
