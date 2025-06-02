@@ -110,6 +110,7 @@ export const PopExitYes = styled(BaseButton)`
 `;
 
 export const PopExitNo = styled(BaseButton)`
+  width: 153px;
   background-color: transparent;
   border: 0.7px solid #565eef;
   color: #565eef;
