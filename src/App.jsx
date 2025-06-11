@@ -1,8 +1,6 @@
 import { GlobalStyles } from "./GlobalStyles";
 import Header from "./components/Header/Header";
 import Main from "./components/pages/MainPage/MainPage";
-import PopBrowse from "./components/pages/PopBrowse/PopBrowse";
-import PopNewCard from "./components/pages/PopNewCard/PopNewCard";
 import { useEffect, useState } from "react";
 import {
   Wraper,
@@ -13,14 +11,25 @@ import {
   PopExitYes,
   PopExitNo,
 } from "./App.styles";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Navigate, Outlet } from "react-router-dom";
 import SignInPage from "./components/pages/SignInPage/SignInPage";
 import SignUpPage from "./components/pages/SignUpPage/SignUpPage";
-import NotFoundPage from "./components/pages/NotFound/NotFoundPage";
+
+// Компонент для защищённых маршрутов
+const ProtectedRoute = ({ isAllowed, redirectPath = "/sign-in", children }) => {
+  if (!isAllowed) {
+    return <Navigate to={redirectPath} replace />;
+  }
+  return children ? children : <Outlet />;
+};
 
 function App() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [isAuth, setIsAuth] = useState(() => {
+    // Проверяем авторизацию при первоначальной загрузке
+    return !!localStorage.getItem("authToken");
+  });
 
   useEffect(() => {
     setTimeout(() => {
@@ -28,13 +37,19 @@ function App() {
     }, 3000);
   }, []);
 
-  const handleExitYes = () => navigate("/sign-in");
+  const handleExitYes = () => {
+    localStorage.removeItem("authToken");
+    setIsAuth(false);
+    navigate("/sign-in");
+  };
+
   const handleExitNo = () => navigate("/");
 
   return (
     <>
       <GlobalStyles />
       <Wraper>
+        {/* Попап выхода */}
         <PopExit id="popExit">
           <PopConteiner>
             <PopExitBlock>
@@ -63,15 +78,29 @@ function App() {
           </PopConteiner>
         </PopExit>
 
-        <PopNewCard />
-        <PopBrowse />
         <Header />
 
         <Routes>
-          <Route path="/" element={<Main loading={loading} />} />
-          <Route path="/sign-in" element={<SignInPage />} />
-          <Route path="/sign-up" element={<SignUpPage />} />
-          <Route path="\*" element={<NotFoundPage />} />
+          {/* Публичные маршруты */}
+          <Route
+            path="/sign-in"
+            element={<SignInPage setIsAuth={setIsAuth} />}
+          />
+          <Route
+            path="/sign-in"
+            element={<SignInPage setIsAuth={setIsAuth} />}
+          />
+
+          {/* Защищённые маршруты */}
+          <Route element={<ProtectedRoute isAllowed={isAuth} />}>
+            <Route path="/" element={<Main loading={loading} />} />
+          </Route>
+
+          {/* Перенаправление для неавторизованных */}
+          <Route
+            path="*"
+            element={<Navigate to={isAuth ? "/" : "/sign-in"} />}
+          />
         </Routes>
       </Wraper>
     </>
