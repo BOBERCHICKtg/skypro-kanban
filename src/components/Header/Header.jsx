@@ -1,5 +1,5 @@
 import { useState } from "react";
-import PopUser from "../PopUser/PopUser";
+import PopUser from "../pages/PopUser/PopUser";
 import {
   SHeader,
   HeaderBlock,

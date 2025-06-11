@@ -1,8 +1,8 @@
 import { GlobalStyles } from "./GlobalStyles";
 import Header from "./components/Header/Header";
-import Main from "./components/Main/Main";
-import PopBrowse from "./components/PopBrowse/PopBrowse";
-import PopNewCard from "./components/PopNewCard/PopNewCard";
+import Main from "./components/pages/MainPage/MainPage";
+import PopBrowse from "./components/pages/PopBrowse/PopBrowse";
+import PopNewCard from "./components/pages/PopNewCard/PopNewCard";
 import { useEffect, useState } from "react";
 import {
   Wraper,
@@ -13,15 +13,23 @@ import {
   PopExitYes,
   PopExitNo,
 } from "./App.styles";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import SignInPage from "./components/pages/SignInPage/SignInPage";
+import SignUpPage from "./components/pages/SignUpPage/SignUpPage";
+import NotFoundPage from "./components/pages/NotFound/NotFoundPage";
 
 function App() {
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
       setLoading(true);
     }, 3000);
   }, []);
+
+  const handleExitYes = () => navigate("/sign-in");
+  const handleExitNo = () => navigate("/");
 
   return (
     <>
@@ -38,26 +46,36 @@ function App() {
                   <PopExitYes
                     className="pop-exit__exit-yes _hover01"
                     id="exitYes"
+                    onClick={handleExitYes}
                   >
-                    <a href="modal/signin.html">Да, выйти</a>{" "}
+                    Да, выйти
                   </PopExitYes>
-                  <PopExitNo className="pop-exit__exit-no _hover03" id="exitNo">
-                    <a href="main.html">Нет, остаться</a>{" "}
+                  <PopExitNo
+                    className="pop-exit__exit-no _hover03"
+                    id="exitNo"
+                    onClick={handleExitNo}
+                  >
+                    Нет, остаться
                   </PopExitNo>
                 </PopExitFormGroup>
               </form>
             </PopExitBlock>
           </PopConteiner>
         </PopExit>
+
         <PopNewCard />
         <PopBrowse />
         <Header />
-        <Main loading={loading} />
+
+        <Routes>
+          <Route path="/" element={<Main loading={loading} />} />
+          <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="\*" element={<NotFoundPage />} />
+        </Routes>
       </Wraper>
     </>
   );
 }
 
 export default App;
-
-/* upDate */

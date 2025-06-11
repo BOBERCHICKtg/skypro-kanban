@@ -1,5 +1,5 @@
-import Card from "../Card/Card";
-import Column from "../Column/Column";
+import Card from "../../Card/Card";
+import Column from "../../Column/Column";
 import {
   MainContainer,
   LoadingMessage,
