@@ -9,7 +9,6 @@ export async function fetchWords({ token }) {
       },
     });
     return data.data;
-    // когда работаем с axios, не забываем, что результат лежит в ключе datа
   } catch (error) {
     throw new Error(error.message);
   }

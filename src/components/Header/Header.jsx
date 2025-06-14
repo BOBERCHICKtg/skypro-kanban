@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import PopUser from "../pages/PopUser/PopUser";
 import {
   SHeader,
@@ -10,12 +11,25 @@ import {
   Container,
 } from "./Header.styles";
 
-const Header = () => {
+const Header = ({ user, onLogout }) => {
   const [isUserPopupVisible, setUserPopupVisible] = useState(false);
+  const navigate = useNavigate();
 
   const toggleUserPopup = (e) => {
     e.preventDefault();
     setUserPopupVisible(!isUserPopupVisible);
+  };
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    onLogout();
+    setUserPopupVisible(false);
+    navigate("/sign-in");
+  };
+
+  const handleNewTask = (e) => {
+    e.preventDefault();
+    navigate("/new-task");
   };
 
   return (
@@ -23,23 +37,36 @@ const Header = () => {
       <Container className="container">
         <HeaderBlock>
           <HeaderLogo className="header__logo _show _light">
-            <a href="" target="_self">
-              <img src="images/logo.png" alt="logo" />
-            </a>
+            <Link to="/">
+              <img src="/images/logo.png" alt="logo" />
+            </Link>
           </HeaderLogo>
           <HeaderLogo className="header__logo _dark">
-            <a href="" target="_self">
-              <img src="images/logo_dark.png" alt="logo" />
-            </a>
+            <Link to="/">
+              <img src="/images/logo_dark.png" alt="logo" />
+            </Link>
           </HeaderLogo>
           <HeaderNav>
-            <ButtonMainNew id="btnMainNew">
-              <a href="#popNewCard">Создать новую задачу</a>
-            </ButtonMainNew>
-            <UserButton href="#user-set-target" onClick={toggleUserPopup}>
-              Ivan Ivanov
-            </UserButton>
-            {isUserPopupVisible && <PopUser />}
+            {user ? (
+              <>
+                <ButtonMainNew id="btnMainNew" onClick={handleNewTask}>
+                  Создать новую задачу
+                </ButtonMainNew>
+                <UserButton href="#user-set-target" onClick={toggleUserPopup}>
+                  {user.name || "Пользователь"}
+                </UserButton>
+                {isUserPopupVisible && (
+                  <PopUser onLogout={handleLogout} user={user} />
+                )}
+              </>
+            ) : (
+              <ButtonMainNew
+                id="btnSignIn"
+                onClick={() => navigate("/sign-in")}
+              >
+                Войти
+              </ButtonMainNew>
+            )}
           </HeaderNav>
         </HeaderBlock>
       </Container>

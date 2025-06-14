@@ -1,7 +1,7 @@
+import { useState, useEffect } from "react";
 import { GlobalStyles } from "./GlobalStyles";
 import Header from "./components/Header/Header";
 import Main from "./components/pages/MainPage/MainPage";
-import { useState, useEffect, useCallback } from "react";
 import {
   Wraper,
   PopExit,
@@ -13,9 +13,8 @@ import {
 } from "./App.styles";
 import { Routes, Route, useNavigate, Navigate, Outlet } from "react-router-dom";
 import SignInPage from "./components/pages/SignInPage/SignInPage";
-import PopNewCard from "./components/pages/PopNewCard/PopNewCard";
+import SignUpPage from "./components/pages/SignUpPage/SignUpPage";
 
-// Компонент для защищённых маршрутов
 const ProtectedRoute = ({ isAllowed, redirectPath = "/sign-in", children }) => {
   if (!isAllowed) {
     return <Navigate to={redirectPath} replace />;
@@ -25,45 +24,29 @@ const ProtectedRoute = ({ isAllowed, redirectPath = "/sign-in", children }) => {
 
 function App() {
   const [loading, setLoading] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const [isAuth, setIsAuth] = useState(() => {
-    // Проверяем авторизацию при первоначальной загрузке
-    return !!localStorage.getItem("authToken");
-  });
 
+  // Проверка авторизации при загрузке
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(true);
-    }, 3000);
+    const token = localStorage.getItem("authToken");
+    const userData = localStorage.getItem("user");
+
+    if (token && userData) {
+      setIsAuth(true);
+      setUser(JSON.parse(userData));
+    }
+    setLoading(true);
   }, []);
 
-  const handleExitYes = () => {
+  const handleLogout = () => {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
     setIsAuth(false);
+    setUser(null);
     navigate("/sign-in");
   };
-
-  const handleExitNo = () => navigate("/");
-
-  const [words, setWords] = useState([]);
-  const [error, setError] = useState("");
-  const getWords = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await fetchWords({
-        // пока у нас не реализована авторизация, передаём токен вручную
-        token: "bgc0b8awbwas6g5g5k5o5s5w606g37w3cc3bo3b83k39s3co3c83c03ck",
-      });
-      if (data) setWords(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-  useEffect(() => {
-    getWords();
-  }, [getWords]);
 
   return (
     <>
@@ -76,48 +59,41 @@ function App() {
               <div className="pop-exit__ttl">
                 <h2>Выйти из аккаунта?</h2>
               </div>
-              <form className="pop-exit__form" id="formExit" action="#">
+              <div className="pop-exit__form">
                 <PopExitFormGroup>
                   <PopExitYes
                     className="pop-exit__exit-yes _hover01"
-                    id="exitYes"
-                    onClick={handleExitYes}
+                    onClick={handleLogout}
                   >
                     Да, выйти
                   </PopExitYes>
                   <PopExitNo
                     className="pop-exit__exit-no _hover03"
-                    id="exitNo"
-                    onClick={handleExitNo}
+                    onClick={() => navigate("/")}
                   >
                     Нет, остаться
                   </PopExitNo>
                 </PopExitFormGroup>
-              </form>
+              </div>
             </PopExitBlock>
           </PopConteiner>
         </PopExit>
 
-        <Header />
+        {/* Шапка с передачей данных пользователя */}
+        <Header user={user} onLogout={handleLogout} />
 
+        {/* Маршруты */}
         <Routes>
-          {/* Публичные маршруты */}
           <Route
             path="/sign-in"
-            element={<SignInPage setIsAuth={setIsAuth} />}
+            element={<SignInPage setIsAuth={setIsAuth} setUser={setUser} />}
           />
-          <Route
-            path="/sign-in"
-            element={<SignInPage setIsAuth={setIsAuth} />}
-          />
-          <Route path="/PopNewCard" element={<PopNewCard />} />
+          <Route path="/sign-up" element={<SignUpPage />} />
 
-          {/* Защищённые маршруты */}
           <Route element={<ProtectedRoute isAllowed={isAuth} />}>
-            <Route path="/" element={<Main loading={loading} />} />
+            <Route path="/" element={<Main loading={loading} user={user} />} />
           </Route>
 
-          {/* Перенаправление для неавторизованных */}
           <Route
             path="*"
             element={<Navigate to={isAuth ? "/" : "/sign-in"} />}
