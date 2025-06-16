@@ -1,43 +1,51 @@
 import axios from "axios";
 
 const API_URL = "https://wedev-api.sky.pro/api/words/";
+
 export async function fetchWords({ token }) {
   try {
-    const data = await axios.get(API_URL, {
+    const { data } = await axios.get(API_URL, {
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: `Bearer ${token}`,
       },
     });
-    return data.data;
+    return data;
   } catch (error) {
-    throw new Error(error.message);
+    if (error.response) {
+      throw new Error(error.response.data.message || error.message);
+    }
+    throw error;
   }
 }
 
 export async function postWord({ token, word }) {
   try {
-    const data = await axios.post(API_URL, word, {
+    const { data } = await axios.post(API_URL, word, {
       headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "text/html",
+        Authorization: `Bearer ${token}`,
       },
     });
-    return data.data.tasks;
+    return data?.tasks || data;
   } catch (error) {
-    throw new Error(error.message);
+    if (error.response) {
+      throw new Error(error.response.data.message || error.message);
+    }
+    throw error;
   }
 }
 
 export async function editWord({ token, id, word }) {
   try {
-    const data = await axios.patch(API_URL + id, word, {
+    const { data } = await axios.patch(`${API_URL}${id}`, word, {
       headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "text/html",
+        Authorization: `Bearer ${token}`,
       },
     });
-    return data.data.tasks;
+    return data?.tasks || data;
   } catch (error) {
-    throw new Error(error.message);
+    if (error.response) {
+      throw new Error(error.response.data.message || error.message);
+    }
+    throw error;
   }
 }

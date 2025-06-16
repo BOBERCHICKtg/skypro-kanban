@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 import {
   ContainerSignIn,
   Modal,
@@ -10,6 +11,8 @@ import {
   ButtonEnter,
   FormGroup,
 } from "./SignInPage.styles";
+
+const API_URL = "https://wedev-api.sky.pro/api/user/login";
 
 const SignInPage = ({ onSuccessfulAuth }) => {
   const navigate = useNavigate();
@@ -24,42 +27,43 @@ const SignInPage = ({ onSuccessfulAuth }) => {
     try {
       const login = e.target.login.value.trim();
       const password = e.target.password.value.trim();
+
       if (!login || !password) {
         throw new Error("Все поля обязательны для заполнения");
       }
 
-      const requestData = { login, password };
-      console.log("Отправляемые данные:", requestData);
+      const requestBody = {
+        login,
+        password,
+      };
 
-      const response = await fetch(
-        "https://webdev-hw-api.vercel.app/api/user/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-        }
-      );
+      console.log("Отправляемый запрос:", {
+        url: API_URL,
+        method: "POST",
+        data: requestBody,
+      });
 
-      const result = await response.json();
-      console.log("Ответ сервера:", result);
+      const response = await axios.post(API_URL, requestBody);
 
-      if (!response.ok) {
-        throw new Error(result.error || "Ошибка авторизации");
-      }
+      const responseData = response.data;
+      console.log("Ответ сервера:", responseData);
 
-      if (!result.token || !result.user) {
+      if (!responseData.token || !responseData.user) {
         throw new Error("Неверный формат ответа сервера");
       }
 
-      onSuccessfulAuth(result);
+      onSuccessfulAuth(responseData);
     } catch (err) {
-      console.error("Ошибка авторизации:", err);
+      console.error("Ошибка авторизации:", {
+        name: err.name,
+        message: err.message,
+        response: err.response?.data,
+      });
+
       setError(
-        err.message.includes("Failed to fetch")
-          ? "Ошибка соединения с сервером. Проверьте интернет и попробуйте снова"
-          : err.message
+        err.response?.data?.error ||
+          err.message ||
+          "Произошла ошибка при авторизации"
       );
     } finally {
       setIsLoading(false);
@@ -77,7 +81,7 @@ const SignInPage = ({ onSuccessfulAuth }) => {
                 style={{
                   color: "red",
                   marginTop: "10px",
-                  padding: "8px",
+                  padding: "10px",
                   background: "#ffeeee",
                   borderRadius: "4px",
                 }}
@@ -90,22 +94,27 @@ const SignInPage = ({ onSuccessfulAuth }) => {
             <Input
               type="text"
               name="login"
-              placeholder="Логин (например: admin)"
+              placeholder="Логин"
               required
               disabled={isLoading}
+              autoComplete="username"
             />
             <Input
               type="password"
               name="password"
-              placeholder="Пароль (например: admin)"
+              placeholder="Пароль"
               required
-              minLength="3"
+              minLength="6"
               disabled={isLoading}
+              autoComplete="current-password"
             />
             <ButtonEnter
               type="submit"
               disabled={isLoading}
-              style={{ opacity: isLoading ? 0.7 : 1 }}
+              style={{
+                opacity: isLoading ? 0.7 : 1,
+                cursor: isLoading ? "wait" : "pointer",
+              }}
             >
               {isLoading ? "Вход..." : "Войти"}
             </ButtonEnter>
