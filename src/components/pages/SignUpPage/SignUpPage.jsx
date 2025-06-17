@@ -14,45 +14,33 @@ import {
 
 const SignUpPage = () => {
   const navigate = useNavigate();
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setIsLoading(true);
     setError("");
 
     try {
-      const formData = {
-        name: event.target.name.value.trim(),
-        login: event.target.login.value.trim(),
-        password: event.target.password.value.trim(),
+      const userData = {
+        name: e.target.name.value.trim(),
+        login: e.target.login.value.trim(),
+        password: e.target.password.value.trim(),
       };
 
-      validateFormData(formData);
+      // Базовая валидация
+      if (userData.password.length < 6) {
+        throw new Error("Пароль должен быть не менее 6 символов");
+      }
 
-      await signUp(formData);
-      navigate("/sign-in", { state: { registrationSuccess: true } });
-    } catch (error) {
-      handleRegistrationError(error);
+      await signUp(userData);
+      navigate("/sign-in");
+    } catch (err) {
+      setError(err.message || "Ошибка регистрации");
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const validateFormData = ({ name, login, password }) => {
-    if (!name || !login || !password) {
-      throw new Error("Все поля обязательны для заполнения");
-    }
-
-    if (password.length < 6) {
-      throw new Error("Пароль должен содержать минимум 6 символов");
-    }
-  };
-
-  const handleRegistrationError = (error) => {
-    console.error("Registration error:", error);
-    setError(error.message || "Произошла ошибка при регистрации");
   };
 
   return (
@@ -61,14 +49,15 @@ const SignUpPage = () => {
         <ModalBlock>
           <ModalTitle>
             <h2>Регистрация</h2>
-            {error && <ErrorMessage>{error}</ErrorMessage>}
+            {error && (
+              <div style={{ color: "red", margin: "10px 0" }}>{error}</div>
+            )}
           </ModalTitle>
 
           <FormLogin onSubmit={handleSubmit}>
             <Input
               type="text"
               name="name"
-              id="name"
               placeholder="Имя"
               required
               disabled={isLoading}
@@ -76,7 +65,6 @@ const SignUpPage = () => {
             <Input
               type="text"
               name="login"
-              id="login"
               placeholder="Логин"
               required
               disabled={isLoading}
@@ -84,25 +72,18 @@ const SignUpPage = () => {
             <Input
               type="password"
               name="password"
-              id="password"
               placeholder="Пароль (минимум 6 символов)"
               required
               minLength="6"
               disabled={isLoading}
             />
 
-            <ButtonSignUp
-              type="submit"
-              disabled={isLoading}
-              aria-busy={isLoading}
-            >
+            <ButtonSignUp type="submit" disabled={isLoading}>
               {isLoading ? "Регистрация..." : "Зарегистрироваться"}
             </ButtonSignUp>
 
             <FormGroup>
-              <p>
-                Уже есть аккаунт? <Link to="/sign-in">Войдите здесь</Link>
-              </p>
+              Уже есть аккаунт? <Link to="/sign-in">Войти</Link>
             </FormGroup>
           </FormLogin>
         </ModalBlock>

@@ -15,56 +15,23 @@ import {
 const API_URL = "https://wedev-api.sky.pro/api/user/login";
 
 const SignInPage = ({ onSuccessfulAuth }) => {
-  const navigate = useNavigate();
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
 
     try {
-      const login = e.target.login.value.trim();
-      const password = e.target.password.value.trim();
-
-      if (!login || !password) {
-        throw new Error("Все поля обязательны для заполнения");
-      }
-
-      const requestBody = {
-        login,
-        password,
-      };
-
-      console.log("Отправляемый запрос:", {
-        url: API_URL,
-        method: "POST",
-        data: requestBody,
+      const response = await axios.post(API_URL, {
+        login: e.target.login.value.trim(),
+        password: e.target.password.value.trim(),
       });
 
-      const response = await axios.post(API_URL, requestBody);
-
-      const responseData = response.data;
-      console.log("Ответ сервера:", responseData);
-
-      if (!responseData.token || !responseData.user) {
-        throw new Error("Неверный формат ответа сервера");
-      }
-
-      onSuccessfulAuth(responseData);
-    } catch (err) {
-      console.error("Ошибка авторизации:", {
-        name: err.name,
-        message: err.message,
-        response: err.response?.data,
-      });
-
-      setError(
-        err.response?.data?.error ||
-          err.message ||
-          "Произошла ошибка при авторизации"
-      );
+      onSuccessfulAuth(response.data);
+      navigate("/");
+    } catch {
+      alert("Неверный логин или пароль");
     } finally {
       setIsLoading(false);
     }
@@ -76,19 +43,6 @@ const SignInPage = ({ onSuccessfulAuth }) => {
         <ModalBlock>
           <ModalTitle>
             <h2>Вход</h2>
-            {error && (
-              <div
-                style={{
-                  color: "red",
-                  marginTop: "10px",
-                  padding: "10px",
-                  background: "#ffeeee",
-                  borderRadius: "4px",
-                }}
-              >
-                {error}
-              </div>
-            )}
           </ModalTitle>
           <FormLogin onSubmit={handleSubmit}>
             <Input
@@ -97,25 +51,15 @@ const SignInPage = ({ onSuccessfulAuth }) => {
               placeholder="Логин"
               required
               disabled={isLoading}
-              autoComplete="username"
             />
             <Input
               type="password"
               name="password"
               placeholder="Пароль"
               required
-              minLength="6"
               disabled={isLoading}
-              autoComplete="current-password"
             />
-            <ButtonEnter
-              type="submit"
-              disabled={isLoading}
-              style={{
-                opacity: isLoading ? 0.7 : 1,
-                cursor: isLoading ? "wait" : "pointer",
-              }}
-            >
+            <ButtonEnter type="submit" disabled={isLoading}>
               {isLoading ? "Вход..." : "Войти"}
             </ButtonEnter>
             <FormGroup>
