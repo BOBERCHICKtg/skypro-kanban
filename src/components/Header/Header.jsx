@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import PopUser from "../pages/PopUser/PopUser";
 import {
   SHeader,
@@ -14,22 +14,21 @@ import {
 const Header = ({ user, onLogout }) => {
   const [isUserPopupVisible, setUserPopupVisible] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleUserPopup = (e) => {
     e.preventDefault();
     setUserPopupVisible(!isUserPopupVisible);
   };
 
-  const handleLogout = (e) => {
+  const handleNewTask = () => {
+    navigate("/pop-new-card", { state: { background: location } });
+  };
+
+  const handleLogoutClick = (e) => {
     e.preventDefault();
     onLogout();
     setUserPopupVisible(false);
-    navigate("/sign-in");
-  };
-
-  const handleNewTask = (e) => {
-    e.preventDefault();
-    navigate("/new-task");
   };
 
   return (
@@ -56,7 +55,7 @@ const Header = ({ user, onLogout }) => {
                   {user.name || "Пользователь"}
                 </UserButton>
                 {isUserPopupVisible && (
-                  <PopUser onLogout={handleLogout} user={user} />
+                  <PopUser onLogout={handleLogoutClick} user={user} />
                 )}
               </>
             ) : (

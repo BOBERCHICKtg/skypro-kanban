@@ -30,14 +30,20 @@ const SignUpPage = () => {
       };
 
       // Базовая валидация
+      if (!userData.name || !userData.login || !userData.password) {
+        throw new Error("Все поля обязательны для заполнения");
+      }
+
       if (userData.password.length < 6) {
         throw new Error("Пароль должен быть не менее 6 символов");
       }
 
       await signUp(userData);
-      navigate("/sign-in");
+      navigate("/sign-in", { state: { success: true } });
     } catch (err) {
-      setError(err.message || "Ошибка регистрации");
+      setError(
+        err.response?.data?.error || err.message || "Ошибка регистрации"
+      );
     } finally {
       setIsLoading(false);
     }

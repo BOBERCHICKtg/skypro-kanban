@@ -11,9 +11,18 @@ import {
   PopExitYes,
   PopExitNo,
 } from "./App.styles";
-import { Routes, Route, useNavigate, Navigate, Outlet } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  Navigate,
+  Outlet,
+  useLocation,
+} from "react-router-dom";
 import SignInPage from "./components/pages/SignInPage/SignInPage";
 import SignUpPage from "./components/pages/SignUpPage/SignUpPage";
+import PopBrowse from "./components/pages/PopBrowse/PopBrowse";
+import PopNewCard from "./components/pages/PopNewCard/PopNewCard";
 
 const ProtectedRoute = ({ isAllowed, redirectPath = "/sign-in", children }) => {
   if (!isAllowed) {
@@ -27,12 +36,12 @@ function App() {
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const background = location.state?.background;
 
-  // Проверка авторизации при загрузке
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     const userData = localStorage.getItem("user");
-
     if (token && userData) {
       setIsAuth(true);
       setUser(JSON.parse(userData));
@@ -52,7 +61,6 @@ function App() {
     <>
       <GlobalStyles />
       <Wraper>
-        {/* Попап выхода */}
         <PopExit id="popExit">
           <PopConteiner>
             <PopExitBlock>
@@ -61,16 +69,8 @@ function App() {
               </div>
               <div className="pop-exit__form">
                 <PopExitFormGroup>
-                  <PopExitYes
-                    className="pop-exit__exit-yes _hover01"
-                    onClick={handleLogout}
-                  >
-                    Да, выйти
-                  </PopExitYes>
-                  <PopExitNo
-                    className="pop-exit__exit-no _hover03"
-                    onClick={() => navigate("/")}
-                  >
+                  <PopExitYes onClick={handleLogout}>Да, выйти</PopExitYes>
+                  <PopExitNo onClick={() => navigate("/")}>
                     Нет, остаться
                   </PopExitNo>
                 </PopExitFormGroup>
@@ -79,16 +79,15 @@ function App() {
           </PopConteiner>
         </PopExit>
 
-        {/* Шапка с передачей данных пользователя */}
         <Header user={user} onLogout={handleLogout} />
 
-        {/* Маршруты */}
-        <Routes>
+        <Routes location={background || location}>
           <Route
             path="/sign-in"
             element={<SignInPage setIsAuth={setIsAuth} setUser={setUser} />}
           />
           <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="/pop-browse" element={<PopBrowse />} />
 
           <Route element={<ProtectedRoute isAllowed={isAuth} />}>
             <Route path="/" element={<Main loading={loading} user={user} />} />
@@ -99,6 +98,19 @@ function App() {
             element={<Navigate to={isAuth ? "/" : "/sign-in"} />}
           />
         </Routes>
+
+        {background && (
+          <Routes>
+            <Route
+              path="/pop-new-card"
+              element={
+                <ProtectedRoute isAllowed={isAuth}>
+                  <PopNewCard user={user} />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        )}
       </Wraper>
     </>
   );

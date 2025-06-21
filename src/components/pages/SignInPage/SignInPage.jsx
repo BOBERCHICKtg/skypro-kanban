@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { signIn } from "../../../services/auth";
 import {
   ContainerSignIn,
   Modal,
@@ -12,26 +12,30 @@ import {
   FormGroup,
 } from "./SignInPage.styles";
 
-const API_URL = "https://wedev-api.sky.pro/api/user/login";
-
-const SignInPage = ({ onSuccessfulAuth }) => {
-  const [isLoading, setIsLoading] = useState(false);
+const SignInPage = () => {
+  // Убрали пропс onSuccessfulAuth
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
     try {
-      const response = await axios.post(API_URL, {
+      const userData = await signIn({
         login: e.target.login.value.trim(),
         password: e.target.password.value.trim(),
       });
 
-      onSuccessfulAuth(response.data);
-      navigate("/");
-    } catch {
-      alert("Неверный логин или пароль");
+      // Сохраняем данные пользователя в localStorage
+      localStorage.setItem("user", JSON.stringify(userData.user));
+      localStorage.setItem("authToken", userData.token);
+
+      navigate("/"); // Перенаправляем на главную страницу
+    } catch (error) {
+      setError(error.message || "Неверный логин или пароль");
     } finally {
       setIsLoading(false);
     }
@@ -43,6 +47,9 @@ const SignInPage = ({ onSuccessfulAuth }) => {
         <ModalBlock>
           <ModalTitle>
             <h2>Вход</h2>
+            {error && (
+              <div style={{ color: "red", margin: "10px 0" }}>{error}</div>
+            )}
           </ModalTitle>
           <FormLogin onSubmit={handleSubmit}>
             <Input
