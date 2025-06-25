@@ -10,6 +10,7 @@ import {
   CardsContainer,
 } from "./Main.styles";
 import { useTasks } from "../../../hooks/useTasks"; // Импортируем наш хук для задач
+import Header from "../../Header/Header";
 
 const Main = () => {
   const { tasks, loading, error } = useTasks();
