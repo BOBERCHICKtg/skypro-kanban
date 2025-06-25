@@ -1,17 +1,37 @@
 import CardItem from "./CardItem";
-import CardList from "../CardList";
 import { Cards } from "./Card.styles";
 
-const Card = () => {
+const Card = ({ tasks, onStatusChange, onDelete, loading }) => {
+  // Функция для обработки изменения статуса
+  const handleStatusChange = (taskId, newStatus) => {
+    if (onStatusChange) {
+      onStatusChange(taskId, newStatus);
+    }
+  };
+
+  // Функция для обработки удаления задачи
+  const handleDelete = (taskId) => {
+    if (onDelete) {
+      onDelete(taskId);
+    }
+  };
+
+  if (loading) {
+    return <div>Загрузка задач...</div>;
+  }
+
   return (
     <Cards>
-      {CardList.map((card) => (
+      {tasks.map((task) => (
         <CardItem
-          key={card.id}
-          theme={card.theme}
-          title={card.title}
-          date={card.date}
-          status={card.status}
+          key={task._id}
+          id={task._id}
+          theme={task.topic}
+          title={task.title}
+          date={task.date}
+          status={task.status}
+          onStatusChange={handleStatusChange}
+          onDelete={handleDelete}
         />
       ))}
     </Cards>

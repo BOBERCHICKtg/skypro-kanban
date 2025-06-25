@@ -13,6 +13,14 @@ export async function signIn({ login, password }) {
         },
       }
     );
+
+    // Сохраняем токен в localStorage
+    if (response.data.token) {
+      localStorage.setItem("userToken", response.data.token);
+      // Можно также сохранить данные пользователя, если они нужны
+      localStorage.setItem("userData", JSON.stringify(response.data.user));
+    }
+
     return response.data; // Должен содержать { user, token }
   } catch (error) {
     throw new Error(error.response?.data?.error || "Ошибка входа");
@@ -26,5 +34,27 @@ export async function signUp(userData) {
   formData.append("password", userData.password);
 
   const response = await axios.post(API_URL, formData);
+
+  // После регистрации можно сразу сохранить токен, если API возвращает его
+  if (response.data.token) {
+    localStorage.setItem("userToken", response.data.token);
+  }
+
   return response.data;
+}
+
+// Дополнительная функция для выхода (очистки токена)
+export function logout() {
+  localStorage.removeItem("userToken");
+  localStorage.removeItem("userData");
+}
+
+// Функция для проверки авторизации
+export function isAuthenticated() {
+  return !!localStorage.getItem("userToken");
+}
+
+// Функция для получения токена
+export function getToken() {
+  return localStorage.getItem("userToken");
 }

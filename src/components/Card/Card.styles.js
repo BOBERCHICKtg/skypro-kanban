@@ -123,3 +123,37 @@ export const CardDate = styled.div`
     letter-spacing: 0.2px;
   }
 `;
+
+export const StatusSelect = styled.select`
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #94a6be;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 8px;
+`;
+
+export const DeleteButton = styled.button`
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ff4d4d;
+  background: #fff;
+  color: #ff4d4d;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: all 0.3s;
+
+  &:hover {
+    background: #ff4d4d;
+    color: #fff;
+  }
+`;
+
+export const CardActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;

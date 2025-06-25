@@ -21,6 +21,8 @@ import {
 } from "./PopNewCard.styles";
 
 const PopNewCard = ({ user }) => {
+  console.log("PopNewCard rendered");
+
   const navigate = useNavigate();
   const location = useLocation();
   const [formData, setFormData] = useState({

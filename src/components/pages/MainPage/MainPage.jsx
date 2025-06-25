@@ -1,5 +1,4 @@
 import Card from "../../Card/Card";
-import Column from "../../Column/Column";
 import {
   MainContainer,
   LoadingMessage,
@@ -9,317 +8,138 @@ import {
   MainColumn,
   ColumnTitle,
   CardsContainer,
-  CardItem,
-  CardWrapper,
-  CardGroup,
-  CardTheme,
-  CardButton,
-  CardContent,
-  CardTitle,
-  CardDate,
 } from "./Main.styles";
+import { useTasks } from "../../../hooks/useTasks"; // Импортируем наш хук для задач
 
-const Main = ({ loading }) => {
+const Main = () => {
+  const { tasks, loading, error } = useTasks();
+
+  // Группируем задачи по статусам
+  const tasksByStatus = {
+    "Без статуса": tasks.filter((task) => task.status === "Без статуса"),
+    "Нужно сделать": tasks.filter((task) => task.status === "Нужно сделать"),
+    "В работе": tasks.filter((task) => task.status === "В работе"),
+    Тестирование: tasks.filter((task) => task.status === "Тестирование"),
+    Готово: tasks.filter((task) => task.status === "Готово"),
+  };
+
+  if (error) {
+    return (
+      <MainContainer>
+        <LoadingMessage>
+          <p>Ошибка при загрузке задач: {error}</p>
+        </LoadingMessage>
+      </MainContainer>
+    );
+  }
+
   return (
     <MainContainer>
-      {!loading && (
+      {loading ? (
         <LoadingMessage>
           <p>Загружаю задачи...</p>
         </LoadingMessage>
-      )}
-
-      {loading && (
+      ) : (
         <Container>
           <MainBlock>
             <MainContent>
+              {/* Колонка "Без статуса" */}
               <MainColumn className="column">
                 <ColumnTitle>
                   <p>Без статуса</p>
                 </ColumnTitle>
-                <Card loading={loading} />
+                <CardsContainer>
+                  {tasksByStatus["Без статуса"].map((task) => (
+                    <Card
+                      key={task._id}
+                      id={task._id}
+                      loading={loading}
+                      title={task.title}
+                      topic={task.topic}
+                      date={task.date}
+                      status={task.status}
+                    />
+                  ))}
+                </CardsContainer>
               </MainColumn>
-              <Column text="Нужно сделать" />
+
+              {/* Колонка "Нужно сделать" */}
+              <MainColumn>
+                <ColumnTitle>
+                  <p>Нужно сделать</p>
+                </ColumnTitle>
+                <CardsContainer>
+                  {tasksByStatus["Нужно сделать"].map((task) => (
+                    <Card
+                      key={task._id}
+                      id={task._id}
+                      loading={loading}
+                      title={task.title}
+                      topic={task.topic}
+                      date={task.date}
+                      status={task.status}
+                    />
+                  ))}
+                </CardsContainer>
+              </MainColumn>
+
+              {/* Колонка "В работе" */}
               <MainColumn>
                 <ColumnTitle>
                   <p>В работе</p>
                 </ColumnTitle>
                 <CardsContainer>
-                  <CardItem>
-                    <CardWrapper>
-                      <CardGroup>
-                        <CardTheme color="green">
-                          <p>Research</p>
-                        </CardTheme>
-                        <a href="#popBrowse" target="_self">
-                          <CardButton>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                          </CardButton>
-                        </a>
-                      </CardGroup>
-                      <CardContent>
-                        <a href="" target="_blank">
-                          <CardTitle>Название задачи</CardTitle>
-                        </a>
-                        <CardDate>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="13"
-                            height="13"
-                            viewBox="0 0 13 13"
-                            fill="none"
-                          >
-                            <g clipPath="url(#clip0_1_415)">
-                              <path
-                                d="M10.5625 2.03125H2.4375C1.7644 2.03125 1.21875 2.5769 1.21875 3.25V10.5625C1.21875 11.2356 1.7644 11.7812 2.4375 11.7812H10.5625C11.2356 11.7812 11.7812 11.2356 11.7812 10.5625V3.25C11.7812 2.5769 11.2356 2.03125 10.5625 2.03125Z"
-                                stroke="#94A6BE"
-                                strokeWidth="0.8"
-                                strokeLinejoin="round"
-                              />
-                              <path
-                                d="M11.7812 4.0625H1.21875M3.25 1.21875V2.03125V1.21875ZM9.75 1.21875V2.03125V1.21875Z"
-                                stroke="#94A6BE"
-                                strokeWidth="0.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </g>
-                            <defs>
-                              <clipPath id="clip0_1_415">
-                                <rect width="13" height="13" fill="white" />
-                              </clipPath>
-                            </defs>
-                          </svg>
-                          <p>30.10.23</p>
-                        </CardDate>
-                      </CardContent>
-                    </CardWrapper>
-                  </CardItem>
-
-                  <CardItem>
-                    <CardWrapper>
-                      <CardGroup>
-                        <CardTheme color="purple">
-                          <p>Copywriting</p>
-                        </CardTheme>
-                        <a href="#popBrowse" target="_self">
-                          <CardButton>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                          </CardButton>
-                        </a>
-                      </CardGroup>
-                      <CardContent>
-                        <a href="" target="_blank">
-                          <CardTitle>Название задачи</CardTitle>
-                        </a>
-                        <CardDate>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="13"
-                            height="13"
-                            viewBox="0 0 13 13"
-                            fill="none"
-                          >
-                            <g clipPath="url(#clip0_1_415)">
-                              <path
-                                d="M10.5625 2.03125H2.4375C1.7644 2.03125 1.21875 2.5769 1.21875 3.25V10.5625C1.21875 11.2356 1.7644 11.7812 2.4375 11.7812H10.5625C11.2356 11.7812 11.7812 11.2356 11.7812 10.5625V3.25C11.7812 2.5769 11.2356 2.03125 10.5625 2.03125Z"
-                                stroke="#94A6BE"
-                                strokeWidth="0.8"
-                                strokeLinejoin="round"
-                              />
-                              <path
-                                d="M11.7812 4.0625H1.21875M3.25 1.21875V2.03125V1.21875ZM9.75 1.21875V2.03125V1.21875Z"
-                                stroke="#94A6BE"
-                                strokeWidth="0.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </g>
-                            <defs>
-                              <clipPath id="clip0_1_415">
-                                <rect width="13" height="13" fill="white" />
-                              </clipPath>
-                            </defs>
-                          </svg>
-                          <p>30.10.23</p>
-                        </CardDate>
-                      </CardContent>
-                    </CardWrapper>
-                  </CardItem>
-
-                  <CardItem>
-                    <CardWrapper>
-                      <CardGroup>
-                        <CardTheme color="orange">
-                          <p>Web Design</p>
-                        </CardTheme>
-                        <a href="#popBrowse" target="_self">
-                          <CardButton>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                          </CardButton>
-                        </a>
-                      </CardGroup>
-                      <CardContent>
-                        <a href="" target="_blank">
-                          <CardTitle>Название задачи</CardTitle>
-                        </a>
-                        <CardDate>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="13"
-                            height="13"
-                            viewBox="0 0 13 13"
-                            fill="none"
-                          >
-                            <g clipPath="url(#clip0_1_415)">
-                              <path
-                                d="M10.5625 2.03125H2.4375C1.7644 2.03125 1.21875 2.5769 1.21875 3.25V10.5625C1.21875 11.2356 1.7644 11.7812 2.4375 11.7812H10.5625C11.2356 11.7812 11.7812 11.2356 11.7812 10.5625V3.25C11.7812 2.5769 11.2356 2.03125 10.5625 2.03125Z"
-                                stroke="#94A6BE"
-                                strokeWidth="0.8"
-                                strokeLinejoin="round"
-                              />
-                              <path
-                                d="M11.7812 4.0625H1.21875M3.25 1.21875V2.03125V1.21875ZM9.75 1.21875V2.03125V1.21875Z"
-                                stroke="#94A6BE"
-                                strokeWidth="0.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </g>
-                            <defs>
-                              <clipPath id="clip0_1_415">
-                                <rect width="13" height="13" fill="white" />
-                              </clipPath>
-                            </defs>
-                          </svg>
-                          <p>30.10.23</p>
-                        </CardDate>
-                      </CardContent>
-                    </CardWrapper>
-                  </CardItem>
+                  {tasksByStatus["В работе"].map((task) => (
+                    <Card
+                      key={task._id}
+                      id={task._id}
+                      loading={loading}
+                      title={task.title}
+                      topic={task.topic}
+                      date={task.date}
+                      status={task.status}
+                    />
+                  ))}
                 </CardsContainer>
               </MainColumn>
+
+              {/* Колонка "Тестирование" */}
               <MainColumn>
                 <ColumnTitle>
                   <p>Тестирование</p>
                 </ColumnTitle>
                 <CardsContainer>
-                  <CardItem>
-                    <CardWrapper>
-                      <CardGroup>
-                        <CardTheme color="green">
-                          <p>Research</p>
-                        </CardTheme>
-                        <a href="#popBrowse" target="_self">
-                          <CardButton>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                          </CardButton>
-                        </a>
-                      </CardGroup>
-                      <CardContent>
-                        <a href="" target="_blank">
-                          <CardTitle>Название задачи</CardTitle>
-                        </a>
-                        <CardDate>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="13"
-                            height="13"
-                            viewBox="0 0 13 13"
-                            fill="none"
-                          >
-                            <g clipPath="url(#clip0_1_415)">
-                              <path
-                                d="M10.5625 2.03125H2.4375C1.7644 2.03125 1.21875 2.5769 1.21875 3.25V10.5625C1.21875 11.2356 1.7644 11.7812 2.4375 11.7812H10.5625C11.2356 11.7812 11.7812 11.2356 11.7812 10.5625V3.25C11.7812 2.5769 11.2356 2.03125 10.5625 2.03125Z"
-                                stroke="#94A6BE"
-                                strokeWidth="0.8"
-                                strokeLinejoin="round"
-                              />
-                              <path
-                                d="M11.7812 4.0625H1.21875M3.25 1.21875V2.03125V1.21875ZM9.75 1.21875V2.03125V1.21875Z"
-                                stroke="#94A6BE"
-                                strokeWidth="0.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </g>
-                            <defs>
-                              <clipPath id="clip0_1_415">
-                                <rect width="13" height="13" fill="white" />
-                              </clipPath>
-                            </defs>
-                          </svg>
-                          <p>30.10.23</p>
-                        </CardDate>
-                      </CardContent>
-                    </CardWrapper>
-                  </CardItem>
+                  {tasksByStatus["Тестирование"].map((task) => (
+                    <Card
+                      key={task._id}
+                      id={task._id}
+                      loading={loading}
+                      title={task.title}
+                      topic={task.topic}
+                      date={task.date}
+                      status={task.status}
+                    />
+                  ))}
                 </CardsContainer>
               </MainColumn>
+
+              {/* Колонка "Готово" */}
               <MainColumn>
                 <ColumnTitle>
                   <p>Готово</p>
                 </ColumnTitle>
                 <CardsContainer>
-                  <CardItem>
-                    <CardWrapper>
-                      <CardGroup>
-                        <CardTheme color="green">
-                          <p>Research</p>
-                        </CardTheme>
-                        <a href="#popBrowse" target="_self">
-                          <CardButton>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                          </CardButton>
-                        </a>
-                      </CardGroup>
-                      <CardContent>
-                        <a href="" target="_blank">
-                          <CardTitle>Название задачи</CardTitle>
-                        </a>
-                        <CardDate>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="13"
-                            height="13"
-                            viewBox="0 0 13 13"
-                            fill="none"
-                          >
-                            <g clipPath="url(#clip0_1_415)">
-                              <path
-                                d="M10.5625 2.03125H2.4375C1.7644 2.03125 1.21875 2.5769 1.21875 3.25V10.5625C1.21875 11.2356 1.7644 11.7812 2.4375 11.7812H10.5625C11.2356 11.7812 11.7812 11.2356 11.7812 10.5625V3.25C11.7812 2.5769 11.2356 2.03125 10.5625 2.03125Z"
-                                stroke="#94A6BE"
-                                strokeWidth="0.8"
-                                strokeLinejoin="round"
-                              />
-                              <path
-                                d="M11.7812 4.0625H1.21875M3.25 1.21875V2.03125V1.21875ZM9.75 1.21875V2.03125V1.21875Z"
-                                stroke="#94A6BE"
-                                strokeWidth="0.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </g>
-                            <defs>
-                              <clipPath id="clip0_1_415">
-                                <rect width="13" height="13" fill="white" />
-                              </clipPath>
-                            </defs>
-                          </svg>
-                          <p>30.10.23</p>
-                        </CardDate>
-                      </CardContent>
-                    </CardWrapper>
-                  </CardItem>
+                  {tasksByStatus["Готово"].map((task) => (
+                    <Card
+                      key={task._id}
+                      id={task._id}
+                      loading={loading}
+                      title={task.title}
+                      topic={task.topic}
+                      date={task.date}
+                      status={task.status}
+                    />
+                  ))}
                 </CardsContainer>
               </MainColumn>
             </MainContent>
