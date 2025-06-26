@@ -15,7 +15,6 @@ export const useTasks = () => {
     return token;
   };
 
-  // Получение списка задач
   const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
@@ -43,7 +42,6 @@ export const useTasks = () => {
     }
   }, []);
 
-  // Получение задачи по ID
   const fetchTaskById = async (taskId) => {
     try {
       setLoading(true);

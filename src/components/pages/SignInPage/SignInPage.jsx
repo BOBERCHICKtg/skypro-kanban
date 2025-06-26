@@ -13,7 +13,7 @@ import {
 } from "./SignInPage.styles";
 
 const SignInPage = () => {
-  // Убрали пропс onSuccessfulAuth
+
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -29,11 +29,11 @@ const SignInPage = () => {
         password: e.target.password.value.trim(),
       });
 
-      // Сохраняем данные пользователя в localStorage
+
       localStorage.setItem("user", JSON.stringify(userData.user));
       localStorage.setItem("authToken", userData.user.token);
 
-      navigate("/"); // Перенаправляем на главную страницу
+      navigate("/");
     } catch (error) {
       setError(error.message || "Неверный логин или пароль");
     } finally {

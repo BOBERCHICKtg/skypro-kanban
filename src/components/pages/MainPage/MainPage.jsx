@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Card from "../../Card/Card";
 import {
   MainContainer,
@@ -9,13 +10,37 @@ import {
   ColumnTitle,
   CardsContainer,
 } from "./Main.styles";
-import { useTasks } from "../../../hooks/useTasks"; // Импортируем наш хук для задач
-import Header from "../../Header/Header";
+import { fetchKanbanTasks } from "../../../services/api";
 
-const Main = () => {
-  const { tasks, loading, error } = useTasks();
+const Main = ({ loading: parentLoading, user }) => {
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Группируем задачи по статусам
+  const loadTasks = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const token = localStorage.getItem("authToken");
+
+      if (!token) {
+        throw new Error("Требуется авторизация. Токен не найден.");
+      }
+
+      const tasksData = await fetchKanbanTasks({ token });
+      setTasks(tasksData || []);
+    } catch (err) {
+      setError(err.message);
+      console.error("Ошибка загрузки задач:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
   const tasksByStatus = {
     "Без статуса": tasks.filter((task) => task.status === "Без статуса"),
     "Нужно сделать": tasks.filter((task) => task.status === "Нужно сделать"),
@@ -29,14 +54,17 @@ const Main = () => {
       <MainContainer>
         <LoadingMessage>
           <p>Ошибка при загрузке задач: {error}</p>
+          <button onClick={loadTasks}>Повторить попытку</button>
         </LoadingMessage>
       </MainContainer>
     );
   }
 
+  const isLoading = parentLoading || loading;
+
   return (
     <MainContainer>
-      {loading ? (
+      {isLoading ? (
         <LoadingMessage>
           <p>Загружаю задачи...</p>
         </LoadingMessage>
@@ -44,105 +72,27 @@ const Main = () => {
         <Container>
           <MainBlock>
             <MainContent>
-              {/* Колонка "Без статуса" */}
-              <MainColumn className="column">
-                <ColumnTitle>
-                  <p>Без статуса</p>
-                </ColumnTitle>
-                <CardsContainer>
-                  {tasksByStatus["Без статуса"].map((task) => (
-                    <Card
-                      key={task._id}
-                      id={task._id}
-                      loading={loading}
-                      title={task.title}
-                      topic={task.topic}
-                      date={task.date}
-                      status={task.status}
-                    />
-                  ))}
-                </CardsContainer>
-              </MainColumn>
-
-              {/* Колонка "Нужно сделать" */}
-              <MainColumn>
-                <ColumnTitle>
-                  <p>Нужно сделать</p>
-                </ColumnTitle>
-                <CardsContainer>
-                  {tasksByStatus["Нужно сделать"].map((task) => (
-                    <Card
-                      key={task._id}
-                      id={task._id}
-                      loading={loading}
-                      title={task.title}
-                      topic={task.topic}
-                      date={task.date}
-                      status={task.status}
-                    />
-                  ))}
-                </CardsContainer>
-              </MainColumn>
-
-              {/* Колонка "В работе" */}
-              <MainColumn>
-                <ColumnTitle>
-                  <p>В работе</p>
-                </ColumnTitle>
-                <CardsContainer>
-                  {tasksByStatus["В работе"].map((task) => (
-                    <Card
-                      key={task._id}
-                      id={task._id}
-                      loading={loading}
-                      title={task.title}
-                      topic={task.topic}
-                      date={task.date}
-                      status={task.status}
-                    />
-                  ))}
-                </CardsContainer>
-              </MainColumn>
-
-              {/* Колонка "Тестирование" */}
-              <MainColumn>
-                <ColumnTitle>
-                  <p>Тестирование</p>
-                </ColumnTitle>
-                <CardsContainer>
-                  {tasksByStatus["Тестирование"].map((task) => (
-                    <Card
-                      key={task._id}
-                      id={task._id}
-                      loading={loading}
-                      title={task.title}
-                      topic={task.topic}
-                      date={task.date}
-                      status={task.status}
-                    />
-                  ))}
-                </CardsContainer>
-              </MainColumn>
-
-              {/* Колонка "Готово" */}
-              <MainColumn>
-                <ColumnTitle>
-                  <p>Готово</p>
-                </ColumnTitle>
-                <CardsContainer>
-                  {tasksByStatus["Готово"].map((task) => (
-                    <Card
-                      key={task._id}
-                      id={task._id}
-                      loading={loading}
-                      title={task.title}
-                      topic={task.topic}
-                      date={task.date}
-                      status={task.status}
-                    />
-                  ))}
-                </CardsContainer>
-              </MainColumn>
+              {Object.entries(tasksByStatus).map(([status, tasks]) => (
+                <MainColumn key={status}>
+                  <ColumnTitle>
+                    <p>{status}</p>
+                  </ColumnTitle>
+                  <CardsContainer>
+                    {tasks.map((task) => (
+                      <Card
+                        key={task._id}
+                        id={task._id}
+                        title={task.title}
+                        topic={task.topic}
+                        date={task.date}
+                        status={task.status}
+                        description={task.description}
+                        onTaskUpdated={loadTasks}
+                      />
+                    ))}
+                  </CardsContainer>
+                </MainColumn>
+              ))}
             </MainContent>
           </MainBlock>
         </Container>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Calendar from "../../Calendar/Calendar";
+import { createKanbanTask } from "../../../services/api";
 import {
   PopNewCards,
   PopNewCardContainer,
@@ -20,15 +21,15 @@ import {
   Theme,
 } from "./PopNewCard.styles";
 
-const PopNewCard = ({ user, addTask }) => {
+const PopNewCard = ({ user, onTaskCreated }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    topic: "Web Design", // Изменено с category на topic для соответствия API
-    status: "Без статуса", // Добавлено поле статуса
-    date: new Date().toISOString(), // Добавлено поле даты
+    topic: "Web Design",
+    status: "Без статуса",
+    date: new Date().toISOString(),
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -56,23 +57,35 @@ const PopNewCard = ({ user, addTask }) => {
     setError(null);
 
     try {
-      // Подготавливаем данные для отправки
-      const taskData = {
-        title: formData.title || "Новая задача", // Значение по умолчанию
-        description: formData.description || "", // Значение по умолчанию
-        topic: formData.topic,
-        status: formData.status,
-        date: formData.date,
-      };
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error(
+          "Требуется авторизация. Пожалуйста, войдите в систему."
+        );
+      }
 
-      // Вызываем функцию добавления задачи из props
-      await addTask(taskData);
+      // Создаем задачу через API
+      const response = await createKanbanTask({
+        token,
+        task: {
+          title: formData.title,
+          description: formData.description,
+          topic: formData.topic,
+          status: formData.status,
+          date: formData.date,
+        },
+      });
 
-      // Закрываем попап после успешного добавления
+      // Оповещаем родительский компонент о новой задаче
+      if (onTaskCreated) {
+        onTaskCreated(response);
+      }
+
+      // Закрываем попап
       handleClose();
     } catch (err) {
-      setError(err.message);
       console.error("Ошибка при создании задачи:", err);
+      setError(err.message || "Произошла ошибка при создании задачи");
     } finally {
       setLoading(false);
     }
@@ -85,11 +98,25 @@ const PopNewCard = ({ user, addTask }) => {
           <div className="pop-new-card__content">
             <PopNewCardTitle>Создание задачи</PopNewCardTitle>
             <PopNewCardClose onClick={handleClose}>&#10006;</PopNewCardClose>
+
             <PopNewCardWrap>
               <FormNew id="formNewCard" onSubmit={handleSubmit}>
-                {error && <div style={{ color: "red" }}>{error}</div>}
+                {error && (
+                  <div
+                    style={{
+                      color: "#ff3333",
+                      backgroundColor: "#ffeeee",
+                      padding: "10px",
+                      borderRadius: "5px",
+                      marginBottom: "15px",
+                    }}
+                  >
+                    {error}
+                  </div>
+                )}
+
                 <FormBlock>
-                  <Subtitle htmlFor="formTitle">Название задачи</Subtitle>
+                  <Subtitle htmlFor="formTitle">Название задачи*</Subtitle>
                   <Input
                     type="text"
                     name="title"
@@ -99,8 +126,10 @@ const PopNewCard = ({ user, addTask }) => {
                     onChange={handleInputChange}
                     autoFocus
                     required
+                    minLength="3"
                   />
                 </FormBlock>
+
                 <FormBlock>
                   <Subtitle htmlFor="textArea">Описание задачи</Subtitle>
                   <TextArea
@@ -109,13 +138,19 @@ const PopNewCard = ({ user, addTask }) => {
                     placeholder="Введите описание задачи..."
                     value={formData.description}
                     onChange={handleInputChange}
+                    rows="4"
                   />
                 </FormBlock>
               </FormNew>
-              <Calendar onDateChange={handleDateChange} />
+
+              <Calendar
+                onDateChange={handleDateChange}
+                selectedDate={new Date(formData.date)}
+              />
             </PopNewCardWrap>
+
             <CategoriesContainer>
-              <CategoriesParagraph>Категория</CategoriesParagraph>
+              <CategoriesParagraph>Категория*</CategoriesParagraph>
               <CategoriesThemes>
                 <Theme
                   color="orange"
@@ -140,8 +175,21 @@ const PopNewCard = ({ user, addTask }) => {
                 </Theme>
               </CategoriesThemes>
             </CategoriesContainer>
-            <CreateButton type="submit" form="formNewCard" disabled={loading}>
-              {loading ? "Создание..." : "Создать задачу"}
+
+            <CreateButton
+              type="submit"
+              form="formNewCard"
+              disabled={loading}
+              $loading={loading}
+            >
+              {loading ? (
+                <>
+                  <span className="spinner"></span>
+                  Создание...
+                </>
+              ) : (
+                "Создать задачу"
+              )}
             </CreateButton>
           </div>
         </PopNewCardBlock>
