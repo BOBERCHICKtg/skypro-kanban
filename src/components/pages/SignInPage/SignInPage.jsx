@@ -31,7 +31,7 @@ const SignInPage = () => {
 
       // Сохраняем данные пользователя в localStorage
       localStorage.setItem("user", JSON.stringify(userData.user));
-      localStorage.setItem("authToken", userData.token);
+      localStorage.setItem("authToken", userData.user.token);
 
       navigate("/"); // Перенаправляем на главную страницу
     } catch (error) {

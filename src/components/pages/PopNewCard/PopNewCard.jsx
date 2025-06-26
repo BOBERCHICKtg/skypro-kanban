@@ -20,16 +20,18 @@ import {
   Theme,
 } from "./PopNewCard.styles";
 
-const PopNewCard = ({ user }) => {
-  console.log("PopNewCard rendered");
-
+const PopNewCard = ({ user, addTask }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    category: "Web Design",
+    topic: "Web Design", // Изменено с category на topic для соответствия API
+    status: "Без статуса", // Добавлено поле статуса
+    date: new Date().toISOString(), // Добавлено поле даты
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleClose = () => {
     navigate(location.state?.background || "/");
@@ -40,14 +42,40 @@ const PopNewCard = ({ user }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCategorySelect = (category) => {
-    setFormData((prev) => ({ ...prev, category }));
+  const handleTopicSelect = (topic) => {
+    setFormData((prev) => ({ ...prev, topic }));
   };
 
-  const handleSubmit = (e) => {
+  const handleDateChange = (date) => {
+    setFormData((prev) => ({ ...prev, date: date.toISOString() }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Создана задача:", formData);
-    handleClose();
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Подготавливаем данные для отправки
+      const taskData = {
+        title: formData.title || "Новая задача", // Значение по умолчанию
+        description: formData.description || "", // Значение по умолчанию
+        topic: formData.topic,
+        status: formData.status,
+        date: formData.date,
+      };
+
+      // Вызываем функцию добавления задачи из props
+      await addTask(taskData);
+
+      // Закрываем попап после успешного добавления
+      handleClose();
+    } catch (err) {
+      setError(err.message);
+      console.error("Ошибка при создании задачи:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,6 +87,7 @@ const PopNewCard = ({ user }) => {
             <PopNewCardClose onClick={handleClose}>&#10006;</PopNewCardClose>
             <PopNewCardWrap>
               <FormNew id="formNewCard" onSubmit={handleSubmit}>
+                {error && <div style={{ color: "red" }}>{error}</div>}
                 <FormBlock>
                   <Subtitle htmlFor="formTitle">Название задачи</Subtitle>
                   <Input
@@ -83,36 +112,36 @@ const PopNewCard = ({ user }) => {
                   />
                 </FormBlock>
               </FormNew>
-              <Calendar />
+              <Calendar onDateChange={handleDateChange} />
             </PopNewCardWrap>
             <CategoriesContainer>
               <CategoriesParagraph>Категория</CategoriesParagraph>
               <CategoriesThemes>
                 <Theme
                   color="orange"
-                  $active={formData.category === "Web Design"}
-                  onClick={() => handleCategorySelect("Web Design")}
+                  $active={formData.topic === "Web Design"}
+                  onClick={() => handleTopicSelect("Web Design")}
                 >
                   Web Design
                 </Theme>
                 <Theme
                   color="green"
-                  $active={formData.category === "Research"}
-                  onClick={() => handleCategorySelect("Research")}
+                  $active={formData.topic === "Research"}
+                  onClick={() => handleTopicSelect("Research")}
                 >
                   Research
                 </Theme>
                 <Theme
                   color="purple"
-                  $active={formData.category === "Copywriting"}
-                  onClick={() => handleCategorySelect("Copywriting")}
+                  $active={formData.topic === "Copywriting"}
+                  onClick={() => handleTopicSelect("Copywriting")}
                 >
                   Copywriting
                 </Theme>
               </CategoriesThemes>
             </CategoriesContainer>
-            <CreateButton type="submit" form="formNewCard">
-              Создать задачу
+            <CreateButton type="submit" form="formNewCard" disabled={loading}>
+              {loading ? "Создание..." : "Создать задачу"}
             </CreateButton>
           </div>
         </PopNewCardBlock>
