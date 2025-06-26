@@ -57,6 +57,8 @@ function App() {
     navigate("/sign-in");
   };
 
+  
+
   return (
     <>
       <GlobalStyles />

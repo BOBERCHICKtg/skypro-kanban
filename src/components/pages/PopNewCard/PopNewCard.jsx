@@ -64,28 +64,40 @@ const PopNewCard = ({ user, onTaskCreated }) => {
         );
       }
 
-      // Создаем задачу через API
+      // Валидация обязательных полей
+      if (!formData.title.trim()) {
+        throw new Error("Название задачи обязательно");
+      }
+
+      // Подготовка данных задачи
+      const taskData = {
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        topic: formData.topic,
+        status: formData.status,
+        date: formData.date,
+      };
+
+      // Отправка данных через API
       const response = await createKanbanTask({
         token,
-        task: {
-          title: formData.title,
-          description: formData.description,
-          topic: formData.topic,
-          status: formData.status,
-          date: formData.date,
-        },
+        task: taskData,
       });
 
-      // Оповещаем родительский компонент о новой задаче
+      // Уведомление родительского компонента
       if (onTaskCreated) {
         onTaskCreated(response);
       }
 
-      // Закрываем попап
+      // Закрытие попапа
       handleClose();
     } catch (err) {
-      console.error("Ошибка при создании задачи:", err);
-      setError(err.message || "Произошла ошибка при создании задачи");
+      console.error("Ошибка создания задачи:", err);
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Произошла ошибка при создании задачи. Пожалуйста, проверьте введенные данные."
+      );
     } finally {
       setLoading(false);
     }

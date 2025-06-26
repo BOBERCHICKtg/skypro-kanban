@@ -1,19 +1,20 @@
 import CardItem from "./CardItem";
 import { Cards } from "./Card.styles";
 
-const Card = ({ tasks, onStatusChange, onDelete, loading }) => {
+const Card = ({
+  tasks = [], // Значение по умолчанию для tasks
+  onStatusChange,
+  onDelete,
+  loading,
+}) => {
   // Функция для обработки изменения статуса
   const handleStatusChange = (taskId, newStatus) => {
-    if (onStatusChange) {
-      onStatusChange(taskId, newStatus);
-    }
+    onStatusChange?.(taskId, newStatus);
   };
 
   // Функция для обработки удаления задачи
   const handleDelete = (taskId) => {
-    if (onDelete) {
-      onDelete(taskId);
-    }
+    onDelete?.(taskId);
   };
 
   if (loading) {
@@ -24,12 +25,12 @@ const Card = ({ tasks, onStatusChange, onDelete, loading }) => {
     <Cards>
       {tasks.map((task) => (
         <CardItem
-          key={task._id}
+          key={task._id || Math.random()} // Запасной ключ если нет _id
           id={task._id}
-          theme={task.topic}
-          title={task.title}
-          date={task.date}
-          status={task.status}
+          theme={task.topic || "Web Design"} // Значение по умолчанию
+          title={task.title || "Новая задача"} // Значение по умолчанию
+          date={task.date || new Date().toISOString()} // Значение по умолчанию
+          status={task.status || "Без статуса"} // Значение по умолчанию
           onStatusChange={handleStatusChange}
           onDelete={handleDelete}
         />

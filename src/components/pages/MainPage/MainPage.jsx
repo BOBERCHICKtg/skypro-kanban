@@ -12,7 +12,7 @@ import {
 } from "./Main.styles";
 import { fetchKanbanTasks } from "../../../services/api";
 
-const Main = ({ loading: parentLoading, user }) => {
+const Main = ({ user, onRefresh }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,6 +29,9 @@ const Main = ({ loading: parentLoading, user }) => {
 
       const tasksData = await fetchKanbanTasks({ token });
       setTasks(tasksData || []);
+
+      // Вызываем колбэк обновления, если он передан
+      if (onRefresh) onRefresh();
     } catch (err) {
       setError(err.message);
       console.error("Ошибка загрузки задач:", err);
@@ -60,11 +63,9 @@ const Main = ({ loading: parentLoading, user }) => {
     );
   }
 
-  const isLoading = parentLoading || loading;
-
   return (
     <MainContainer>
-      {isLoading ? (
+      {loading ? (
         <LoadingMessage>
           <p>Загружаю задачи...</p>
         </LoadingMessage>

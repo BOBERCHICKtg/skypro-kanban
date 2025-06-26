@@ -14,7 +14,7 @@ export async function signIn({ login, password }) {
       }
     );
 
-    console.log("Ответ сервера:", response.data); // Перед сохранением токена
+    console.log("Ответ сервера:", response.data);
 
     if (response.data.token) {
       localStorage.setItem("userToken", response.data.token);
@@ -50,5 +50,3 @@ export function isAuthenticated() {
 export function getToken() {
   return localStorage.getItem("userToken");
 }
-
-
