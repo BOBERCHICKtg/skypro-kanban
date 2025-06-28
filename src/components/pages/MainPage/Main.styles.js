@@ -163,3 +163,4 @@ export const CardDate = styled.div`
     letter-spacing: 0.2px;
   }
 `;
+

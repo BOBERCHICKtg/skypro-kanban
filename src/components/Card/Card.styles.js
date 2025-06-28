@@ -157,3 +157,52 @@ export const CardActions = styled.div`
   align-items: center;
   gap: 8px;
 `;
+
+// Добавьте другие необходимые стилизованные компоненты
+export const CardItem = styled.div`
+  padding: 5px;
+  animation-name: card-animation;
+  animation-duration: 500ms;
+  animation-timing-function: linear;
+`;
+
+export const CardTheme = styled.div`
+  width: auto;
+  height: 20px;
+  padding: 5px 14px;
+  border-radius: 18px;
+  background-color: ${(props) =>
+    props.color === "green"
+      ? "#B4FDD1"
+      : props.color === "purple"
+      ? "#E9D4FF"
+      : props.color === "orange"
+      ? "#FFE4C2"
+      : ""};
+
+  p {
+    color: ${(props) =>
+      props.color === "green"
+        ? "#06B16E"
+        : props.color === "purple"
+        ? "#9A48F1"
+        : props.color === "orange"
+        ? "#FF6D00"
+        : ""};
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 10px;
+  }
+`;
+
+export const CardWrapper = styled.div`
+  width: 220px;
+  height: 130px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: stretch;
+  padding: 15px 13px 19px;
+`;

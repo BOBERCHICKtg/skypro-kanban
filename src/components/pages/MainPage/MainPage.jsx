@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Card from "../../Card/Card";
+import { fetchKanbanTasks } from "../../../services/api";
 import {
   MainContainer,
   LoadingMessage,
@@ -10,9 +11,8 @@ import {
   ColumnTitle,
   CardsContainer,
 } from "./Main.styles";
-import { fetchKanbanTasks } from "../../../services/api";
 
-const Main = ({ user, onRefresh }) => {
+const Main = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,21 +20,11 @@ const Main = ({ user, onRefresh }) => {
   const loadTasks = async () => {
     try {
       setLoading(true);
-      setError(null);
       const token = localStorage.getItem("authToken");
-
-      if (!token) {
-        throw new Error("Требуется авторизация. Токен не найден.");
-      }
-
       const tasksData = await fetchKanbanTasks({ token });
       setTasks(tasksData || []);
-
-      // Вызываем колбэк обновления, если он передан
-      if (onRefresh) onRefresh();
     } catch (err) {
       setError(err.message);
-      console.error("Ошибка загрузки задач:", err);
     } finally {
       setLoading(false);
     }
@@ -55,10 +45,7 @@ const Main = ({ user, onRefresh }) => {
   if (error) {
     return (
       <MainContainer>
-        <LoadingMessage>
-          <p>Ошибка при загрузке задач: {error}</p>
-          <button onClick={loadTasks}>Повторить попытку</button>
-        </LoadingMessage>
+        <LoadingMessage>Ошибка: {error}</LoadingMessage>
       </MainContainer>
     );
   }
@@ -66,9 +53,7 @@ const Main = ({ user, onRefresh }) => {
   return (
     <MainContainer>
       {loading ? (
-        <LoadingMessage>
-          <p>Загружаю задачи...</p>
-        </LoadingMessage>
+        <LoadingMessage>Загрузка задач...</LoadingMessage>
       ) : (
         <Container>
           <MainBlock>
@@ -79,18 +64,7 @@ const Main = ({ user, onRefresh }) => {
                     <p>{status}</p>
                   </ColumnTitle>
                   <CardsContainer>
-                    {tasks.map((task) => (
-                      <Card
-                        key={task._id}
-                        id={task._id}
-                        title={task.title}
-                        topic={task.topic}
-                        date={task.date}
-                        status={task.status}
-                        description={task.description}
-                        onTaskUpdated={loadTasks}
-                      />
-                    ))}
+                    <Card tasks={tasks} loading={loading} />
                   </CardsContainer>
                 </MainColumn>
               ))}

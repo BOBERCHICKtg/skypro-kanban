@@ -58,19 +58,13 @@ const PopNewCard = ({ user, onTaskCreated }) => {
 
     try {
       const token = localStorage.getItem("authToken");
-      if (!token) {
-        throw new Error(
-          "Требуется авторизация. Пожалуйста, войдите в систему."
-        );
-      }
+      if (!token) throw new Error("Требуется авторизация");
 
-      // Валидация обязательных полей
       if (!formData.title.trim()) {
-        throw new Error("Название задачи обязательно");
+        throw new Error("Введите название задачи");
       }
 
-      // Подготовка данных задачи
-      const taskData = {
+      const newTask = {
         title: formData.title.trim(),
         description: formData.description.trim(),
         topic: formData.topic,
@@ -78,26 +72,16 @@ const PopNewCard = ({ user, onTaskCreated }) => {
         date: formData.date,
       };
 
-      // Отправка данных через API
-      const response = await createKanbanTask({
-        token,
-        task: taskData,
-      });
+      const createdTask = await createKanbanTask({ token, task: newTask });
 
-      // Уведомление родительского компонента
       if (onTaskCreated) {
-        onTaskCreated(response);
+        onTaskCreated(createdTask);
       }
 
-      // Закрытие попапа
       handleClose();
     } catch (err) {
       console.error("Ошибка создания задачи:", err);
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Произошла ошибка при создании задачи. Пожалуйста, проверьте введенные данные."
-      );
+      setError(err.message || "Не удалось создать задачу");
     } finally {
       setLoading(false);
     }
@@ -113,19 +97,7 @@ const PopNewCard = ({ user, onTaskCreated }) => {
 
             <PopNewCardWrap>
               <FormNew id="formNewCard" onSubmit={handleSubmit}>
-                {error && (
-                  <div
-                    style={{
-                      color: "#ff3333",
-                      backgroundColor: "#ffeeee",
-                      padding: "10px",
-                      borderRadius: "5px",
-                      marginBottom: "15px",
-                    }}
-                  >
-                    {error}
-                  </div>
-                )}
+                {error && <ErrorMessage>{error}</ErrorMessage>}
 
                 <FormBlock>
                   <Subtitle htmlFor="formTitle">Название задачи*</Subtitle>
@@ -138,7 +110,6 @@ const PopNewCard = ({ user, onTaskCreated }) => {
                     onChange={handleInputChange}
                     autoFocus
                     required
-                    minLength="3"
                   />
                 </FormBlock>
 
@@ -164,44 +135,27 @@ const PopNewCard = ({ user, onTaskCreated }) => {
             <CategoriesContainer>
               <CategoriesParagraph>Категория*</CategoriesParagraph>
               <CategoriesThemes>
-                <Theme
-                  color="orange"
-                  $active={formData.topic === "Web Design"}
-                  onClick={() => handleTopicSelect("Web Design")}
-                >
-                  Web Design
-                </Theme>
-                <Theme
-                  color="green"
-                  $active={formData.topic === "Research"}
-                  onClick={() => handleTopicSelect("Research")}
-                >
-                  Research
-                </Theme>
-                <Theme
-                  color="purple"
-                  $active={formData.topic === "Copywriting"}
-                  onClick={() => handleTopicSelect("Copywriting")}
-                >
-                  Copywriting
-                </Theme>
+                {["Web Design", "Research", "Copywriting"].map((topic) => (
+                  <Theme
+                    key={topic}
+                    $active={formData.topic === topic}
+                    onClick={() => handleTopicSelect(topic)}
+                    $color={
+                      topic === "Web Design"
+                        ? "orange"
+                        : topic === "Research"
+                        ? "green"
+                        : "purple"
+                    }
+                  >
+                    {topic}
+                  </Theme>
+                ))}
               </CategoriesThemes>
             </CategoriesContainer>
 
-            <CreateButton
-              type="submit"
-              form="formNewCard"
-              disabled={loading}
-              $loading={loading}
-            >
-              {loading ? (
-                <>
-                  <span className="spinner"></span>
-                  Создание...
-                </>
-              ) : (
-                "Создать задачу"
-              )}
+            <CreateButton type="submit" form="formNewCard" disabled={loading}>
+              {loading ? "Создание..." : "Создать задачу"}
             </CreateButton>
           </div>
         </PopNewCardBlock>
