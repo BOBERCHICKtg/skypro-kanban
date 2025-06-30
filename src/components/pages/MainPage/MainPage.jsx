@@ -10,9 +10,10 @@ import {
   MainColumn,
   ColumnTitle,
   CardsContainer,
+  EmptyState,
 } from "./Main.styles";
 
-const Main = () => {
+const Main = ({ newTask }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,7 +33,7 @@ const Main = () => {
 
   useEffect(() => {
     loadTasks();
-  }, []);
+  }, [newTask]); // Обновляем при изменении newTask
 
   const tasksByStatus = {
     "Без статуса": tasks.filter((task) => task.status === "Без статуса"),
@@ -50,28 +51,40 @@ const Main = () => {
     );
   }
 
+  if (loading) {
+    return (
+      <MainContainer>
+        <LoadingMessage>Загрузка задач...</LoadingMessage>
+      </MainContainer>
+    );
+  }
+
+  if (tasks.length === 0) {
+    return (
+      <MainContainer>
+        <EmptyState>Нет задач. Создайте первую!</EmptyState>
+      </MainContainer>
+    );
+  }
+
   return (
     <MainContainer>
-      {loading ? (
-        <LoadingMessage>Загрузка задач...</LoadingMessage>
-      ) : (
-        <Container>
-          <MainBlock>
-            <MainContent>
-              {Object.entries(tasksByStatus).map(([status, tasks]) => (
-                <MainColumn key={status}>
-                  <ColumnTitle>
-                    <p>{status}</p>
-                  </ColumnTitle>
-                  <CardsContainer>
-                    <Card tasks={tasks} loading={loading} />
-                  </CardsContainer>
-                </MainColumn>
-              ))}
-            </MainContent>
-          </MainBlock>
-        </Container>
-      )}
+      <Container>
+        <MainBlock>
+          <MainContent>
+            {Object.entries(tasksByStatus).map(([status, tasks]) => (
+              <MainColumn key={status}>
+                <ColumnTitle>
+                  <p>{status}</p>
+                </ColumnTitle>
+                <CardsContainer>
+                  <Card tasks={tasks} />
+                </CardsContainer>
+              </MainColumn>
+            ))}
+          </MainContent>
+        </MainBlock>
+      </Container>
     </MainContainer>
   );
 };

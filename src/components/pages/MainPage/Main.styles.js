@@ -164,3 +164,11 @@ export const CardDate = styled.div`
   }
 `;
 
+export const EmptyState = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 24px;
+  color: #94a6be;
+`;

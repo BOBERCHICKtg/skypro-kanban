@@ -31,6 +31,7 @@ const PopNewCard = ({ user, onTaskCreated }) => {
     status: "Без статуса",
     date: new Date().toISOString(),
   });
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -48,6 +49,7 @@ const PopNewCard = ({ user, onTaskCreated }) => {
   };
 
   const handleDateChange = (date) => {
+    setSelectedDate(date);
     setFormData((prev) => ({ ...prev, date: date.toISOString() }));
   };
 
@@ -75,7 +77,7 @@ const PopNewCard = ({ user, onTaskCreated }) => {
       const createdTask = await createKanbanTask({ token, task: newTask });
 
       if (onTaskCreated) {
-        onTaskCreated(createdTask);
+        onTaskCreated(createdTask); // Обновляем список задач
       }
 
       handleClose();
@@ -127,30 +129,35 @@ const PopNewCard = ({ user, onTaskCreated }) => {
               </FormNew>
 
               <Calendar
-                onDateChange={handleDateChange}
-                selectedDate={new Date(formData.date)}
+                selectedDate={selectedDate}
+                onChange={handleDateChange}
               />
             </PopNewCardWrap>
 
             <CategoriesContainer>
               <CategoriesParagraph>Категория*</CategoriesParagraph>
               <CategoriesThemes>
-                {["Web Design", "Research", "Copywriting"].map((topic) => (
-                  <Theme
-                    key={topic}
-                    $active={formData.topic === topic}
-                    onClick={() => handleTopicSelect(topic)}
-                    $color={
-                      topic === "Web Design"
-                        ? "orange"
-                        : topic === "Research"
-                        ? "green"
-                        : "purple"
-                    }
-                  >
-                    {topic}
-                  </Theme>
-                ))}
+                <Theme
+                  $active={formData.topic === "Web Design"}
+                  onClick={() => handleTopicSelect("Web Design")}
+                  $color="orange"
+                >
+                  Web Design
+                </Theme>
+                <Theme
+                  $active={formData.topic === "Research"}
+                  onClick={() => handleTopicSelect("Research")}
+                  $color="green"
+                >
+                  Research
+                </Theme>
+                <Theme
+                  $active={formData.topic === "Copywriting"}
+                  onClick={() => handleTopicSelect("Copywriting")}
+                  $color="purple"
+                >
+                  Copywriting
+                </Theme>
               </CategoriesThemes>
             </CategoriesContainer>
 
