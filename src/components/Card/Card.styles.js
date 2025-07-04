@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 export const Cards = styled.div`
@@ -69,7 +70,7 @@ export const Theme = styled.div`
   }
 `;
 
-export const CardButton = styled.a`
+export const CardButton = styled(Link)`
   width: 24px;
   height: 24px;
   display: flex;

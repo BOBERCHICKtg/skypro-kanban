@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   CalendarContainer,
   CalendarTitle,
@@ -19,15 +20,112 @@ import {
   HiddenInput,
 } from "./Calendar.styles";
 
-const Calendar = () => {
+const Calendar = ({ onChange, activeDate }) => {
+  const [currentDate, setCurrentDate] = useState(activeDate || new Date());
+
+  // Получаем первый день месяца и количество дней в месяце
+  const firstDayOfMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1
+  );
+  const daysInMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1,
+    0
+  ).getDate();
+
+  // Получаем день недели первого дня месяца (0 - воскресенье, 1 - понедельник и т.д.)
+  const startingDay = firstDayOfMonth.getDay();
+  const adjustedStartingDay = startingDay === 0 ? 6 : startingDay - 1; // Корректировка для недели, начинающейся с понедельника
+
+  // Генерация дней предыдущего месяца
+  const prevMonthDays = [];
+  const prevMonthDaysCount = adjustedStartingDay;
+  const prevMonthLastDay = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    0
+  ).getDate();
+
+  for (let i = 0; i < prevMonthDaysCount; i++) {
+    prevMonthDays.push(prevMonthLastDay - (prevMonthDaysCount - 1 - i));
+  }
+
+  // Генерация дней текущего месяца
+  const currentMonthDays = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  // Генерация дней следующего месяца
+  const nextMonthDays = [];
+  const totalCells = prevMonthDays.length + currentMonthDays.length;
+  const nextMonthDaysCount =
+    totalCells <= 35 ? 35 - totalCells : 42 - totalCells;
+
+  for (let i = 1; i <= nextMonthDaysCount; i++) {
+    nextMonthDays.push(i);
+  }
+
+  // Обработчики навигации
+  const handlePrevMonth = () => {
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
+    );
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+    );
+  };
+
+  // Обработчик выбора даты
+  const handleDateSelect = (day) => {
+    const newDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      day
+    );
+
+    if (onChange) {
+      onChange(newDate);
+    }
+  };
+
+  // Форматирование даты
+  const formatDate = (date) => {
+    if (!date) return "";
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear().toString().slice(-2);
+    return `${day}.${month}.${year}`;
+  };
+
+  // Названия месяцев
+  const monthNames = [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
+  ];
+
   return (
     <CalendarContainer>
       <CalendarTitle>Даты</CalendarTitle>
       <CalendarBlock>
         <CalendarNav>
-          <CalendarMonth>Сентябрь 2023</CalendarMonth>
+          <CalendarMonth>
+            {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+          </CalendarMonth>
           <NavActions>
-            <NavAction data-action="prev">
+            <NavAction onClick={handlePrevMonth} data-action="prev">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="6"
@@ -37,7 +135,7 @@ const Calendar = () => {
                 <path d="M5.72945 1.95273C6.09018 1.62041 6.09018 1.0833 5.72945 0.750969C5.36622 0.416344 4.7754 0.416344 4.41218 0.750969L0.528487 4.32883C-0.176162 4.97799 -0.176162 6.02201 0.528487 6.67117L4.41217 10.249C4.7754 10.5837 5.36622 10.5837 5.72945 10.249C6.09018 9.9167 6.09018 9.37959 5.72945 9.04727L1.87897 5.5L5.72945 1.95273Z" />
               </svg>
             </NavAction>
-            <NavAction data-action="next">
+            <NavAction onClick={handleNextMonth} data-action="next">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="6"
@@ -60,48 +158,92 @@ const Calendar = () => {
             <DayName className="-weekend-">вс</DayName>
           </DaysNames>
           <Cells>
-            <OtherMonthCell>28</OtherMonthCell>
-            <OtherMonthCell>29</OtherMonthCell>
-            <OtherMonthCell>30</OtherMonthCell>
-            <Cell>31</Cell>
-            <Cell>1</Cell>
-            <Cell className="_weekend">2</Cell>
-            <Cell className="_weekend">3</Cell>
-            <Cell>4</Cell>
-            <Cell>5</Cell>
-            <Cell>6</Cell>
-            <Cell>7</Cell>
-            <CurrentCell>8</CurrentCell>
-            <ActiveDayCell className="_weekend">9</ActiveDayCell>
-            <Cell className="_weekend">10</Cell>
-            <Cell>11</Cell>
-            <Cell>12</Cell>
-            <Cell>13</Cell>
-            <Cell>14</Cell>
-            <Cell>15</Cell>
-            <Cell className="_weekend">16</Cell>
-            <Cell className="_weekend">17</Cell>
-            <Cell>18</Cell>
-            <Cell>19</Cell>
-            <Cell>20</Cell>
-            <Cell>21</Cell>
-            <Cell>22</Cell>
-            <Cell className="_weekend">23</Cell>
-            <Cell className="_weekend">24</Cell>
-            <Cell>25</Cell>
-            <Cell>26</Cell>
-            <Cell>27</Cell>
-            <Cell>28</Cell>
-            <Cell>29</Cell>
-            <Cell className="_weekend">30</Cell>
-            <OtherMonthCell className="_weekend">1</OtherMonthCell>
+            {/* Дни предыдущего месяца */}
+            {prevMonthDays.map((day) => (
+              <OtherMonthCell key={`prev-${day}`}>{day}</OtherMonthCell>
+            ))}
+
+            {/* Дни текущего месяца */}
+            {currentMonthDays.map((day) => {
+              const date = new Date(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                day
+              );
+              const isActive =
+                activeDate &&
+                activeDate.getDate() === day &&
+                activeDate.getMonth() === currentDate.getMonth() &&
+                activeDate.getFullYear() === currentDate.getFullYear();
+              const isToday =
+                new Date().getDate() === day &&
+                new Date().getMonth() === currentDate.getMonth() &&
+                new Date().getFullYear() === currentDate.getFullYear();
+              const isWeekend =
+                new Date(
+                  currentDate.getFullYear(),
+                  currentDate.getMonth(),
+                  day
+                ).getDay() %
+                  6 ===
+                0;
+
+              if (isActive) {
+                return (
+                  <ActiveDayCell
+                    key={`current-${day}`}
+                    className={isWeekend ? "_weekend" : ""}
+                    onClick={() => handleDateSelect(day)}
+                  >
+                    {day}
+                  </ActiveDayCell>
+                );
+              } else if (isToday) {
+                return (
+                  <CurrentCell
+                    key={`current-${day}`}
+                    className={isWeekend ? "_weekend" : ""}
+                    onClick={() => handleDateSelect(day)}
+                  >
+                    {day}
+                  </CurrentCell>
+                );
+              } else {
+                return (
+                  <Cell
+                    key={`current-${day}`}
+                    className={isWeekend ? "_weekend" : ""}
+                    onClick={() => handleDateSelect(day)}
+                  >
+                    {day}
+                  </Cell>
+                );
+              }
+            })}
+
+            {/* Дни следующего месяца */}
+            {nextMonthDays.map((day) => (
+              <OtherMonthCell
+                key={`next-${day}`}
+                className={
+                  day === 1 && nextMonthDays.length <= 7 ? "_weekend" : ""
+                }
+              >
+                {day}
+              </OtherMonthCell>
+            ))}
           </Cells>
         </CalendarContent>
 
-        <HiddenInput type="hidden" id="datepick_value" value="08.09.2023" />
+        <HiddenInput
+          type="hidden"
+          id="datepick_value"
+          value={formatDate(activeDate)}
+        />
         <CalendarPeriod>
           <CalendarText>
-            Срок исполнения: <span className="date-control">09.09.23</span>
+            Срок исполнения:{" "}
+            <span className="date-control">{formatDate(activeDate)}</span>
           </CalendarText>
         </CalendarPeriod>
       </CalendarBlock>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Card from "../../Card/Card";
+import PopBrowse from "../PopBrowse/PopBrowse";
 import { fetchKanbanTasks } from "../../../services/api";
 import {
   MainContainer,
@@ -13,10 +14,12 @@ import {
   EmptyState,
 } from "./Main.styles";
 
-const Main = ({ newTask }) => {
-  const [tasks, setTasks] = useState([]);
+const Main = ({ tasks, setTasks }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // Добавлено состояние для модального окна
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loadTasks = async () => {
     try {
@@ -33,7 +36,19 @@ const Main = ({ newTask }) => {
 
   useEffect(() => {
     loadTasks();
-  }, [newTask]); // Обновляем при изменении newTask
+  }, []);
+
+  // Добавлен обработчик клика по задаче
+  const handleCardClick = (task) => {
+    setSelectedTask(task);
+    setIsModalOpen(true);
+  };
+
+  // Добавлен обработчик закрытия модального окна
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedTask(null);
+  };
 
   const tasksByStatus = {
     "Без статуса": tasks.filter((task) => task.status === "Без статуса"),
@@ -78,13 +93,19 @@ const Main = ({ newTask }) => {
                   <p>{status}</p>
                 </ColumnTitle>
                 <CardsContainer>
-                  <Card tasks={tasks} />
+                  {/* Передаем обработчик клика в Card */}
+                  <Card tasks={tasks} onTaskClick={handleCardClick} />
                 </CardsContainer>
               </MainColumn>
             ))}
           </MainContent>
         </MainBlock>
       </Container>
+
+      {/* Добавлено модальное окно */}
+      {isModalOpen && selectedTask && (
+        <PopBrowse task={selectedTask} onClose={handleCloseModal} />
+      )}
     </MainContainer>
   );
 };

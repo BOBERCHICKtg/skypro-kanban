@@ -33,6 +33,7 @@ const ProtectedRoute = ({ isAllowed, redirectPath = "/sign-in", children }) => {
 
 function App() {
   const [loading, setLoading] = useState(false);
+  const [tasks, setTasks] = useState([]);
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -56,8 +57,6 @@ function App() {
     setUser(null);
     navigate("/sign-in");
   };
-
-  
 
   return (
     <>
@@ -89,10 +88,13 @@ function App() {
             element={<SignInPage setIsAuth={setIsAuth} setUser={setUser} />}
           />
           <Route path="/sign-up" element={<SignUpPage />} />
-          <Route path="/pop-browse" element={<PopBrowse />} />
+          <Route path="/pop-browse/:id" element={<PopBrowse />} />
 
           <Route element={<ProtectedRoute isAllowed={isAuth} />}>
-            <Route path="/" element={<Main loading={loading} user={user} />} />
+            <Route
+              path="/"
+              element={<Main tasks={tasks} setTasks={setTasks} />}
+            />
           </Route>
 
           <Route
@@ -107,7 +109,7 @@ function App() {
               path="/pop-new-card"
               element={
                 <ProtectedRoute isAllowed={isAuth}>
-                  <PopNewCard user={user} />
+                  <PopNewCard user={user} setTasks={setTasks} />
                 </ProtectedRoute>
               }
             />

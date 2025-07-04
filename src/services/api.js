@@ -71,7 +71,6 @@ export const kanbanAPI = {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "",
-          Accept: "application/json",
         },
         transformRequest: [(data) => data],
         transformResponse: [validateJSON],

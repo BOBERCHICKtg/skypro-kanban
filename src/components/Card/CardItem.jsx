@@ -10,8 +10,7 @@ import {
   CardDate,
 } from "./Card.styles";
 
-function CardItem({ theme, title, date, status }) {
-  // Determine theme color class
+function CardItem({ theme, title, date, status, selectedDate }) {
   const getThemeColor = () => {
     switch (theme) {
       case "Web Design":
@@ -25,7 +24,23 @@ function CardItem({ theme, title, date, status }) {
     }
   };
 
+  // Функция для форматирования даты
+  const formatDate = (dateObj) => {
+    if (!dateObj) return "";
+    const day = dateObj.getDate().toString().padStart(2, "0");
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+    const year = dateObj.getFullYear();
+    return `${day}.${month}.${year}`;
+  };
+
   const themeColor = getThemeColor();
+
+  // Определяем, какую дату показывать
+  const displayDate = selectedDate
+    ? formatDate(selectedDate)
+    : date
+    ? formatDate(new Date(date))
+    : "No date";
 
   return (
     <CardItemWrapper>
@@ -73,7 +88,7 @@ function CardItem({ theme, title, date, status }) {
                 </clipPath>
               </defs>
             </svg>
-            <p>{date}</p>
+            <p>{displayDate}</p>
           </CardDate>
         </CardContent>
       </Card>

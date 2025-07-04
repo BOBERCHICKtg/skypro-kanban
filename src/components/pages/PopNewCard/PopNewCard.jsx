@@ -21,19 +21,19 @@ import {
   Theme,
 } from "./PopNewCard.styles";
 
-const PopNewCard = ({ user, onTaskCreated }) => {
+const PopNewCard = ({ setTasks }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [activeDate, setActiveDate] = useState(new Date());
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     topic: "Web Design",
     status: "Без статуса",
-    date: new Date().toISOString(),
+    date: activeDate,
   });
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const handleClose = () => {
     navigate(location.state?.background || "/");
@@ -49,7 +49,7 @@ const PopNewCard = ({ user, onTaskCreated }) => {
   };
 
   const handleDateChange = (date) => {
-    setSelectedDate(date);
+    setActiveDate(date);
     setFormData((prev) => ({ ...prev, date: date.toISOString() }));
   };
 
@@ -76,8 +76,10 @@ const PopNewCard = ({ user, onTaskCreated }) => {
 
       const createdTask = await createKanbanTask({ token, task: newTask });
 
-      if (onTaskCreated) {
-        onTaskCreated(createdTask); // Обновляем список задач
+      console.log(createdTask);
+
+      if (setTasks) {
+        setTasks(createdTask.tasks); // Обновляем список задач
       }
 
       handleClose();
@@ -128,10 +130,7 @@ const PopNewCard = ({ user, onTaskCreated }) => {
                 </FormBlock>
               </FormNew>
 
-              <Calendar
-                selectedDate={selectedDate}
-                onChange={handleDateChange}
-              />
+              <Calendar activeDate={activeDate} onChange={handleDateChange} />
             </PopNewCardWrap>
 
             <CategoriesContainer>
