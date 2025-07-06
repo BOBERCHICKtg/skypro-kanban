@@ -139,21 +139,21 @@ const PopNewCard = ({ setTasks }) => {
                 <Theme
                   $active={formData.topic === "Web Design"}
                   onClick={() => handleTopicSelect("Web Design")}
-                  $color="orange"
+                  color="orange"
                 >
                   Web Design
                 </Theme>
                 <Theme
                   $active={formData.topic === "Research"}
                   onClick={() => handleTopicSelect("Research")}
-                  $color="green"
+                  color="green"
                 >
                   Research
                 </Theme>
                 <Theme
                   $active={formData.topic === "Copywriting"}
                   onClick={() => handleTopicSelect("Copywriting")}
-                  $color="purple"
+                  color="purple"
                 >
                   Copywriting
                 </Theme>
