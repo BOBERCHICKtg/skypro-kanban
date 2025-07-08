@@ -58,6 +58,10 @@ function App() {
     navigate("/sign-in");
   };
 
+  // Проверяем, находимся ли мы на странице входа или регистрации
+  const isAuthPage =
+    location.pathname === "/sign-in" || location.pathname === "/sign-up";
+
   return (
     <>
       <GlobalStyles />
@@ -80,7 +84,8 @@ function App() {
           </PopConteiner>
         </PopExit>
 
-        <Header user={user} onLogout={handleLogout} />
+        {/* Показываем хедер только если это не страница входа/регистрации */}
+        {!isAuthPage && <Header user={user} onLogout={handleLogout} />}
 
         <Routes location={background || location}>
           <Route
