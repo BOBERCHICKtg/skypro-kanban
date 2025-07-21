@@ -23,12 +23,12 @@ import {
   Subtitle,
 } from "./PopBrowse.styles";
 
-const PopBrowse = ({ task, onClose }) => {
+const PopBrowse = ({ tasks, onClose }) => {
   const { id } = useParams();
-  const [isEditMode, setIsEditMode] = useState(false);
-  console.log(id);
 
-  // Состояния для редактирования
+  const task = tasks?.find((task) => task._id === id);
+
+  const [isEditMode, setIsEditMode] = useState(false);
   const [editedTask, setEditedTask] = useState({
     title: task?.title || "",
     description: task?.description || "",

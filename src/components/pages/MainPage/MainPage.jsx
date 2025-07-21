@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Card from "../../Card/Card";
-import PopBrowse from "../PopBrowse/PopBrowse";
 import { fetchKanbanTasks } from "../../../services/api";
 import {
   MainContainer,
@@ -103,9 +102,6 @@ const Main = ({ tasks, setTasks }) => {
       </Container>
 
       {/* Добавлено модальное окно */}
-      {isModalOpen && selectedTask && (
-        <PopBrowse task={selectedTask} onClose={handleCloseModal} />
-      )}
     </MainContainer>
   );
 };

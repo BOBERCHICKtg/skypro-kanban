@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 export const PopBrowseContainer = styled.div`
-  display: none;
   width: 100%;
   height: 100%;
   min-width: 375px;

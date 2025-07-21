@@ -93,7 +93,7 @@ function App() {
             element={<SignInPage setIsAuth={setIsAuth} setUser={setUser} />}
           />
           <Route path="/sign-up" element={<SignUpPage />} />
-          <Route path="/pop-browse/:id" element={<PopBrowse />} />
+          <Route path="/pop-browse/:id" element={<PopBrowse tasks={tasks} />} />
 
           <Route element={<ProtectedRoute isAllowed={isAuth} />}>
             <Route
