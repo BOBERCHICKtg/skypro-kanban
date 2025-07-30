@@ -9,16 +9,13 @@ import {
 const PopUser = () => {
   return (
     <PopUserSetWrapper id="user-set-target">
-      <a href="">x</a>
       <PopUserName>Ivan Ivanov</PopUserName>
       <PopUserMail>ivan.ivanov@gmail.com</PopUserMail>
       <PopUserTheme>
         <p>Темная тема</p>
-        <input type="checkbox" className="checkbox" name="checkbox" />
+        <input type="checkbox" name="theme" />
       </PopUserTheme>
-      <PopUserButton type="button">
-        <a href="#popExit">Выйти</a>
-      </PopUserButton>
+      <PopUserButton type="button">Выйти</PopUserButton>
     </PopUserSetWrapper>
   );
 };

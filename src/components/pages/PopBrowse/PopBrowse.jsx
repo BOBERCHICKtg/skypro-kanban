@@ -25,9 +25,7 @@ import {
 
 const PopBrowse = ({ tasks, onClose }) => {
   const { id } = useParams();
-
   const task = tasks?.find((task) => task._id === id);
-
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedTask, setEditedTask] = useState({
     title: task?.title || "",
@@ -37,15 +35,9 @@ const PopBrowse = ({ tasks, onClose }) => {
     date: task?.date || new Date(),
   });
 
-  const handleEdit = () => {
-    setIsEditMode(true);
-  };
+  const handleEdit = () => setIsEditMode(true);
 
-  const handleSave = () => {
-    // Здесь должна быть логика сохранения изменений
-    setIsEditMode(false);
-    // onSave(editedTask); // Можно добавить функцию сохранения
-  };
+  const handleSave = () => setIsEditMode(false);
 
   const handleCancel = () => {
     setIsEditMode(false);
@@ -72,6 +64,14 @@ const PopBrowse = ({ tasks, onClose }) => {
   };
 
   if (!task) return null;
+
+  const statusOptions = [
+    "Без статуса",
+    "Нужно сделать",
+    "В работе",
+    "Тестирование",
+    "Готово",
+  ];
 
   return (
     <PopBrowseContainer id="popBrowse">
@@ -112,13 +112,7 @@ const PopBrowse = ({ tasks, onClose }) => {
             <PopBrowseStatus>
               <StatusTitle>Статус</StatusTitle>
               <StatusThemes>
-                {[
-                  "Без статуса",
-                  "Нужно сделать",
-                  "В работе",
-                  "Тестирование",
-                  "Готово",
-                ].map((status) => (
+                {statusOptions.map((status) => (
                   <StatusTheme
                     key={status}
                     className={`
@@ -134,7 +128,7 @@ const PopBrowse = ({ tasks, onClose }) => {
             </PopBrowseStatus>
 
             <PopBrowseWrap>
-              <PopBrowseForm id="formBrowseCard" action="#">
+              <PopBrowseForm id="formBrowseCard">
                 <FormBrowseBlock>
                   <Subtitle htmlFor="textArea01">Описание задачи</Subtitle>
                   <FormBrowseArea
@@ -155,45 +149,39 @@ const PopBrowse = ({ tasks, onClose }) => {
               />
             </PopBrowseWrap>
 
-            <ThemeDown className="theme-down">
+            <ThemeDown>
               <Subtitle>Категория</Subtitle>
               <CategoryTheme $orange className="_active-category">
                 <p>{task.category}</p>
               </CategoryTheme>
             </ThemeDown>
 
-            {!isEditMode ? (
-              <ButtonGroup className="pop-browse__btn-browse">
-                <div className="btn-group">
+            <ButtonGroup>
+              {!isEditMode ? (
+                <>
                   <Button $border onClick={handleEdit}>
-                    <a href="#">Редактировать задачу</a>
+                    Редактировать задачу
                   </Button>
-                  <Button $border>
-                    <a href="#">Удалить задачу</a>
+                  <Button $border>Удалить задачу</Button>
+                  <Button $background onClick={onClose}>
+                    Закрыть
                   </Button>
-                </div>
-                <Button $background onClick={onClose}>
-                  <a href="#">Закрыть</a>
-                </Button>
-              </ButtonGroup>
-            ) : (
-              <ButtonGroup className="pop-browse__btn-edit">
-                <div className="btn-group">
+                </>
+              ) : (
+                <>
                   <Button $background onClick={handleSave}>
-                    <a href="#">Сохранить</a>
+                    Сохранить
                   </Button>
                   <Button $border onClick={handleCancel}>
-                    <a href="#">Отменить</a>
+                    Отменить
                   </Button>
-                  <Button $border id="btnDelete">
-                    <a href="#">Удалить задачу</a>
+                  <Button $border>Удалить задачу</Button>
+                  <Button $background onClick={onClose}>
+                    Закрыть
                   </Button>
-                </div>
-                <Button $background onClick={onClose}>
-                  <a href="#">Закрыть</a>
-                </Button>
-              </ButtonGroup>
-            )}
+                </>
+              )}
+            </ButtonGroup>
           </PopBrowseContent>
         </PopBrowseBlock>
       </PopBrowseWrapper>

@@ -10,10 +10,10 @@ import {
   Input,
   ButtonEnter,
   FormGroup,
+  ErrorMessage,
 } from "./SignInPage.styles";
 
 const SignInPage = () => {
-
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -24,15 +24,14 @@ const SignInPage = () => {
     setError("");
 
     try {
+      const { login, password } = e.target.elements;
       const userData = await signIn({
-        login: e.target.login.value.trim(),
-        password: e.target.password.value.trim(),
+        login: login.value.trim(),
+        password: password.value.trim(),
       });
-
 
       localStorage.setItem("user", JSON.stringify(userData.user));
       localStorage.setItem("authToken", userData.user.token);
-
       navigate("/");
     } catch (error) {
       setError(error.message || "Неверный логин или пароль");
@@ -47,9 +46,7 @@ const SignInPage = () => {
         <ModalBlock>
           <ModalTitle>
             <h2>Вход</h2>
-            {error && (
-              <div style={{ color: "red", margin: "10px 0" }}>{error}</div>
-            )}
+            {error && <ErrorMessage>{error}</ErrorMessage>}
           </ModalTitle>
           <FormLogin onSubmit={handleSubmit}>
             <Input

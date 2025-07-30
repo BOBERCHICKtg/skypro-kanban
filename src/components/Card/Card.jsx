@@ -14,9 +14,7 @@ import {
 const Card = ({ tasks, selectedDate }) => {
   const navigate = useNavigate();
 
-  if (!tasks || tasks.length === 0) {
-    return null;
-  }
+  if (!tasks?.length) return null;
 
   const formatDate = (date) => {
     if (!date) return null;
@@ -25,23 +23,34 @@ const Card = ({ tasks, selectedDate }) => {
       const dateObj = date instanceof Date ? date : new Date(date);
       if (isNaN(dateObj.getTime())) return null;
 
-      const day = dateObj.getDate().toString().padStart(2, "0");
-      const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
-      const year = dateObj.getFullYear();
-
-      return `${day}.${month}.${year}`;
+      return dateObj
+        .toLocaleDateString("ru-RU", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        })
+        .replace(/\//g, ".");
     } catch {
       return null;
     }
   };
 
-  const handleCardClick = (taskId) => {
-    navigate(`pop-browse/${taskId}`);
-  };
+  const handleCardClick = (taskId) => navigate(`pop-browse/${taskId}`);
 
   const handleButtonClick = (taskId, e) => {
     e.stopPropagation();
     navigate(`pop-browse/${taskId}`);
+  };
+
+  const getThemeColor = (topic) => {
+    switch (topic) {
+      case "Web Design":
+        return "orange";
+      case "Research":
+        return "green";
+      default:
+        return "purple";
+    }
   };
 
   return (
@@ -55,15 +64,7 @@ const Card = ({ tasks, selectedDate }) => {
         >
           <CardWrapper>
             <CardGroup>
-              <CardTheme
-                color={
-                  task.topic === "Web Design"
-                    ? "orange"
-                    : task.topic === "Research"
-                    ? "green"
-                    : "purple"
-                }
-              >
+              <CardTheme color={getThemeColor(task.topic)}>
                 <p>{task.topic}</p>
               </CardTheme>
               <CardButton

@@ -1,27 +1,26 @@
 import { signIn, signUp } from "../services/auth";
 import BaseInput from "./BaseInput";
+import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
+import BaseButton from "./BaseButton";
 
 const AuthForm = ({ isSignUp, setIsAuth }) => {
   const navigate = useNavigate();
 
-  // состояние полей
   const [formData, setFormData] = useState({
     name: "",
     login: "",
     password: "",
   });
 
-  // состояние ошибок
   const [errors, setErrors] = useState({
     name: "",
     login: "",
     password: "",
   });
 
-  // состояние текста ошибки, чтобы показать её пользователю
   const [error, setError] = useState("");
 
-  // функция валидации
   const validateForm = () => {
     const newErrors = { name: "", login: "", password: "" };
     let isValid = true;
@@ -48,8 +47,6 @@ const AuthForm = ({ isSignUp, setIsAuth }) => {
     return isValid;
   };
 
-  // функция, которая отслеживает в полях изменения
-  // и меняет состояние компонента
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -60,16 +57,11 @@ const AuthForm = ({ isSignUp, setIsAuth }) => {
     setError("");
   };
 
-  // функция отправки формы
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      // если у нас форма не прошла валидацию, то дальше не продолжаем
-      return;
-    }
+    if (!validateForm()) return;
+
     try {
-      // чтобы не писать две разных функции, выберем нужный запрос через
-      // тернарный оператор
       const data = !isSignUp
         ? await signIn({ login: formData.login, password: formData.password })
         : await signUp(formData);
@@ -87,7 +79,7 @@ const AuthForm = ({ isSignUp, setIsAuth }) => {
   return (
     <div className="bg">
       <div className="modal">
-        <div className="logo">SkyWords</div>;
+        <div className="logo">SkyWords</div>
         <div className="wrapper">
           <h2 className="title">{isSignUp ? "Регистрация" : "Вход"}</h2>
           <form className="form" id="form" onSubmit={handleSubmit}>
@@ -122,20 +114,19 @@ const AuthForm = ({ isSignUp, setIsAuth }) => {
                 onChange={handleChange}
               />
             </div>
-            <p style={{ color: "red" }}>;{error}</p>
+            <p style={{ color: "red" }}>{error}</p>
             <BaseButton
               type="secondary"
               fullWidth={true}
               text={isSignUp ? "Зарегистрироваться" : "Войти"}
             />
 
-            {!isSignUp && (
+            {!isSignUp ? (
               <div className="form-group">
                 <p>Нужно зарегистрироваться?</p>
                 <Link to="/sign-up">Регистрируйтесь здесь</Link>
               </div>
-            )}
-            {isSignUp && (
+            ) : (
               <div className="form-group">
                 <p>
                   Есть аккаунт? <Link to="/sign-in">Войдите здесь</Link>

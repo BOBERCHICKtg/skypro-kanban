@@ -24,29 +24,28 @@ function CardItem({ theme, title, date, status, selectedDate }) {
     }
   };
 
-  // Функция для форматирования даты
   const formatDate = (dateObj) => {
     if (!dateObj) return "";
-    const day = dateObj.getDate().toString().padStart(2, "0");
-    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
-    const year = dateObj.getFullYear();
-    return `${day}.${month}.${year}`;
+    return dateObj
+      .toLocaleDateString("ru-RU", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+      .replace(/\//g, ".");
   };
 
-  const themeColor = getThemeColor();
-
-  // Определяем, какую дату показывать
   const displayDate = selectedDate
     ? formatDate(selectedDate)
     : date
-    ? formatDate(new Date(date))
-    : "No date";
+      ? formatDate(new Date(date))
+      : "No date";
 
   return (
     <CardItemWrapper>
       <Card>
         <CardGroup>
-          <Theme themeColor={themeColor}>
+          <Theme themeColor={getThemeColor()}>
             <p>{theme}</p>
           </Theme>
           <CardButton href="#popBrowse" target="_self">

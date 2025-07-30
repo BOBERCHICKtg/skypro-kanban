@@ -8,19 +8,15 @@ function AppRoutes() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
+    const timer = setTimeout(() => setLoading(false), 3000);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <Router>
       <Routes>
-        {/* Главная страница */}
         <Route path="/" element={<Main loading={loading} />} />
-        {/* Страница входа */}
         <Route path="/sign-in" element={<SignInPage />} />
-        {/* Страница регистрации */}
         <Route path="/sign-up" element={<SignUpPage />} />
       </Routes>
     </Router>

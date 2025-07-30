@@ -13,11 +13,11 @@ import {
   CardDate,
 } from "./Column.styles";
 
-const Column = (props) => {
+const Column = ({ text }) => {
   return (
     <MainColumn>
       <ColumnTitle>
-        <p>{props.text}</p>
+        <p>{text}</p>
       </ColumnTitle>
       <CardsContainer>
         <CardItem>
@@ -26,7 +26,7 @@ const Column = (props) => {
               <CardTheme green>
                 <p>Research</p>
               </CardTheme>
-              <a href="#popBrowse" target="_self">
+              <a href="#popBrowse" target="_self" rel="noopener noreferrer">
                 <CardButton>
                   <Dot />
                   <Dot />
@@ -35,7 +35,7 @@ const Column = (props) => {
               </a>
             </CardGroup>
             <CardContent>
-              <a href="" target="_blank">
+              <a href="#" target="_blank" rel="noopener noreferrer">
                 <CardTitle>Название задачи</CardTitle>
               </a>
               <CardDate>

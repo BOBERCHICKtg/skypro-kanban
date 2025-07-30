@@ -123,3 +123,8 @@ export const FormGroup = styled.div`
     text-decoration: underline;
   }
 `;
+
+export const ErrorMessage = styled.div`
+  color: red;
+  margin: 10px 0;
+`;

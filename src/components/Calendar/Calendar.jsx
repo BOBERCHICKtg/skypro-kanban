@@ -20,10 +20,24 @@ import {
   HiddenInput,
 } from "./Calendar.styles";
 
+const monthNames = [
+  "Январь",
+  "Февраль",
+  "Март",
+  "Апрель",
+  "Май",
+  "Июнь",
+  "Июль",
+  "Август",
+  "Сентябрь",
+  "Октябрь",
+  "Ноябрь",
+  "Декабрь",
+];
+
 const Calendar = ({ onChange, activeDate }) => {
   const [currentDate, setCurrentDate] = useState(activeDate || new Date());
 
-  // Получаем первый день месяца и количество дней в месяце
   const firstDayOfMonth = new Date(
     currentDate.getFullYear(),
     currentDate.getMonth(),
@@ -35,11 +49,9 @@ const Calendar = ({ onChange, activeDate }) => {
     0
   ).getDate();
 
-  // Получаем день недели первого дня месяца (0 - воскресенье, 1 - понедельник и т.д.)
   const startingDay = firstDayOfMonth.getDay();
-  const adjustedStartingDay = startingDay === 0 ? 6 : startingDay - 1; // Корректировка для недели, начинающейся с понедельника
+  const adjustedStartingDay = startingDay === 0 ? 6 : startingDay - 1;
 
-  // Генерация дней предыдущего месяца
   const prevMonthDays = [];
   const prevMonthDaysCount = adjustedStartingDay;
   const prevMonthLastDay = new Date(
@@ -52,10 +64,8 @@ const Calendar = ({ onChange, activeDate }) => {
     prevMonthDays.push(prevMonthLastDay - (prevMonthDaysCount - 1 - i));
   }
 
-  // Генерация дней текущего месяца
   const currentMonthDays = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
-  // Генерация дней следующего месяца
   const nextMonthDays = [];
   const totalCells = prevMonthDays.length + currentMonthDays.length;
   const nextMonthDaysCount =
@@ -65,7 +75,6 @@ const Calendar = ({ onChange, activeDate }) => {
     nextMonthDays.push(i);
   }
 
-  // Обработчики навигации
   const handlePrevMonth = () => {
     setCurrentDate(
       new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
@@ -78,20 +87,15 @@ const Calendar = ({ onChange, activeDate }) => {
     );
   };
 
-  // Обработчик выбора даты
   const handleDateSelect = (day) => {
     const newDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
       day
     );
-
-    if (onChange) {
-      onChange(newDate);
-    }
+    onChange?.(newDate);
   };
 
-  // Форматирование даты
   const formatDate = (date) => {
     if (!date) return "";
     const day = date.getDate().toString().padStart(2, "0");
@@ -99,22 +103,6 @@ const Calendar = ({ onChange, activeDate }) => {
     const year = date.getFullYear().toString().slice(-2);
     return `${day}.${month}.${year}`;
   };
-
-  // Названия месяцев
-  const monthNames = [
-    "Январь",
-    "Февраль",
-    "Март",
-    "Апрель",
-    "Май",
-    "Июнь",
-    "Июль",
-    "Август",
-    "Сентябрь",
-    "Октябрь",
-    "Ноябрь",
-    "Декабрь",
-  ];
 
   return (
     <CalendarContainer>
@@ -158,12 +146,10 @@ const Calendar = ({ onChange, activeDate }) => {
             <DayName className="-weekend-">вс</DayName>
           </DaysNames>
           <Cells>
-            {/* Дни предыдущего месяца */}
             {prevMonthDays.map((day) => (
               <OtherMonthCell key={`prev-${day}`}>{day}</OtherMonthCell>
             ))}
 
-            {/* Дни текущего месяца */}
             {currentMonthDays.map((day) => {
               const date = new Date(
                 currentDate.getFullYear(),
@@ -179,14 +165,7 @@ const Calendar = ({ onChange, activeDate }) => {
                 new Date().getDate() === day &&
                 new Date().getMonth() === currentDate.getMonth() &&
                 new Date().getFullYear() === currentDate.getFullYear();
-              const isWeekend =
-                new Date(
-                  currentDate.getFullYear(),
-                  currentDate.getMonth(),
-                  day
-                ).getDay() %
-                  6 ===
-                0;
+              const isWeekend = date.getDay() % 6 === 0;
 
               if (isActive) {
                 return (
@@ -198,7 +177,8 @@ const Calendar = ({ onChange, activeDate }) => {
                     {day}
                   </ActiveDayCell>
                 );
-              } else if (isToday) {
+              }
+              if (isToday) {
                 return (
                   <CurrentCell
                     key={`current-${day}`}
@@ -208,20 +188,18 @@ const Calendar = ({ onChange, activeDate }) => {
                     {day}
                   </CurrentCell>
                 );
-              } else {
-                return (
-                  <Cell
-                    key={`current-${day}`}
-                    className={isWeekend ? "_weekend" : ""}
-                    onClick={() => handleDateSelect(day)}
-                  >
-                    {day}
-                  </Cell>
-                );
               }
+              return (
+                <Cell
+                  key={`current-${day}`}
+                  className={isWeekend ? "_weekend" : ""}
+                  onClick={() => handleDateSelect(day)}
+                >
+                  {day}
+                </Cell>
+              );
             })}
 
-            {/* Дни следующего месяца */}
             {nextMonthDays.map((day) => (
               <OtherMonthCell
                 key={`next-${day}`}

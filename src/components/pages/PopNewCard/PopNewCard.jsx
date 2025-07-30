@@ -19,6 +19,7 @@ import {
   CategoriesParagraph,
   CategoriesThemes,
   Theme,
+  ErrorMessage,
 } from "./PopNewCard.styles";
 
 const PopNewCard = ({ setTasks }) => {
@@ -35,9 +36,7 @@ const PopNewCard = ({ setTasks }) => {
     date: activeDate,
   });
 
-  const handleClose = () => {
-    navigate(location.state?.background || "/");
-  };
+  const handleClose = () => navigate(location.state?.background || "/");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -50,7 +49,7 @@ const PopNewCard = ({ setTasks }) => {
 
   const handleDateChange = (date) => {
     setActiveDate(date);
-    setFormData((prev) => ({ ...prev, date: date.toISOString() }));
+    setFormData((prev) => ({ ...prev, date }));
   };
 
   const handleSubmit = async (e) => {
@@ -61,10 +60,7 @@ const PopNewCard = ({ setTasks }) => {
     try {
       const token = localStorage.getItem("authToken");
       if (!token) throw new Error("Требуется авторизация");
-
-      if (!formData.title.trim()) {
-        throw new Error("Введите название задачи");
-      }
+      if (!formData.title.trim()) throw new Error("Введите название задачи");
 
       const newTask = {
         title: formData.title.trim(),
@@ -75,16 +71,9 @@ const PopNewCard = ({ setTasks }) => {
       };
 
       const createdTask = await createKanbanTask({ token, task: newTask });
-
-      console.log(createdTask);
-
-      if (setTasks) {
-        setTasks(createdTask.tasks); // Обновляем список задач
-      }
-
+      setTasks?.(createdTask.tasks);
       handleClose();
     } catch (err) {
-      console.error("Ошибка создания задачи:", err);
       setError(err.message || "Не удалось создать задачу");
     } finally {
       setLoading(false);
@@ -136,27 +125,22 @@ const PopNewCard = ({ setTasks }) => {
             <CategoriesContainer>
               <CategoriesParagraph>Категория*</CategoriesParagraph>
               <CategoriesThemes>
-                <Theme
-                  $active={formData.topic === "Web Design"}
-                  onClick={() => handleTopicSelect("Web Design")}
-                  color="orange"
-                >
-                  Web Design
-                </Theme>
-                <Theme
-                  $active={formData.topic === "Research"}
-                  onClick={() => handleTopicSelect("Research")}
-                  color="green"
-                >
-                  Research
-                </Theme>
-                <Theme
-                  $active={formData.topic === "Copywriting"}
-                  onClick={() => handleTopicSelect("Copywriting")}
-                  color="purple"
-                >
-                  Copywriting
-                </Theme>
+                {["Web Design", "Research", "Copywriting"].map((topic) => (
+                  <Theme
+                    key={topic}
+                    $active={formData.topic === topic}
+                    onClick={() => handleTopicSelect(topic)}
+                    color={
+                      topic === "Web Design"
+                        ? "orange"
+                        : topic === "Research"
+                          ? "green"
+                          : "purple"
+                    }
+                  >
+                    {topic}
+                  </Theme>
+                ))}
               </CategoriesThemes>
             </CategoriesContainer>
 

@@ -10,36 +10,53 @@ export const WordsProvider = ({ children }) => {
 
   useEffect(() => {
     const loadWords = async () => {
+      setLoading(true);
       try {
         const data = await fetchWords();
         setWords(data);
-      } catch (error) {
-        console.error("Ошибка загрузки слов", error);
+      } catch (err) {
+        setError("Failed to load words");
+      } finally {
+        setLoading(false);
       }
     };
     loadWords();
   }, []);
 
-  const addNewWord = async ({ word }) => {
+  const addNewWord = async (wordData) => {
+    setLoading(true);
     try {
-      const newWords = await postWord({ token: user?.token, word });
+      const newWords = await postWord({ ...wordData, token: user?.token });
       setWords(newWords);
-    } catch (error) {
-      console.error("Ошибка добавления слова", error);
+    } catch (err) {
+      setError("Failed to add word");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const updateWord = async ({ word, id }) => {
+  const updateWord = async (wordData) => {
+    setLoading(true);
     try {
-      const newWords = await editWord({ token: user?.token, id, word });
+      const newWords = await editWord({ ...wordData, token: user?.token });
       setWords(newWords);
-    } catch (error) {
-      console.error("Ошибка редактирования слова", error);
+    } catch (err) {
+      setError("Failed to update word");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <WordsContext.Provider value={{ words, setWords, loading, error }}>
+    <WordsContext.Provider
+      value={{
+        words,
+        loading,
+        error,
+        addNewWord,
+        updateWord,
+      }}
+    >
       {children}
     </WordsContext.Provider>
   );

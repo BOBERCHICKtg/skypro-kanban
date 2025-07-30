@@ -16,7 +16,6 @@ import {
 const Main = ({ tasks, setTasks }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // Добавлено состояние для модального окна
   const [selectedTask, setSelectedTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -37,13 +36,11 @@ const Main = ({ tasks, setTasks }) => {
     loadTasks();
   }, []);
 
-  // Добавлен обработчик клика по задаче
   const handleCardClick = (task) => {
     setSelectedTask(task);
     setIsModalOpen(true);
   };
 
-  // Добавлен обработчик закрытия модального окна
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedTask(null);
@@ -92,7 +89,6 @@ const Main = ({ tasks, setTasks }) => {
                   <p>{status}</p>
                 </ColumnTitle>
                 <CardsContainer>
-                  {/* Передаем обработчик клика в Card */}
                   <Card tasks={tasks} onTaskClick={handleCardClick} />
                 </CardsContainer>
               </MainColumn>
@@ -100,8 +96,6 @@ const Main = ({ tasks, setTasks }) => {
           </MainContent>
         </MainBlock>
       </Container>
-
-      {/* Добавлено модальное окно */}
     </MainContainer>
   );
 };

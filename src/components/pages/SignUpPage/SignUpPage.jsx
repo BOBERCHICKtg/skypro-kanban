@@ -10,6 +10,7 @@ import {
   Input,
   ButtonSignUp,
   FormGroup,
+  ErrorMessage,
 } from "./SignUpPage.styles";
 
 const SignUpPage = () => {
@@ -23,13 +24,13 @@ const SignUpPage = () => {
     setError("");
 
     try {
+      const { name, login, password } = e.target.elements;
       const userData = {
-        name: e.target.name.value.trim(),
-        login: e.target.login.value.trim(),
-        password: e.target.password.value.trim(),
+        name: name.value.trim(),
+        login: login.value.trim(),
+        password: password.value.trim(),
       };
 
-      // Базовая валидация
       if (!userData.name || !userData.login || !userData.password) {
         throw new Error("Все поля обязательны для заполнения");
       }
@@ -55,9 +56,7 @@ const SignUpPage = () => {
         <ModalBlock>
           <ModalTitle>
             <h2>Регистрация</h2>
-            {error && (
-              <div style={{ color: "red", margin: "10px 0" }}>{error}</div>
-            )}
+            {error && <ErrorMessage>{error}</ErrorMessage>}
           </ModalTitle>
 
           <FormLogin onSubmit={handleSubmit}>

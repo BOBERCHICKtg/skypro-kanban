@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import PopUser from "../pages/PopUser/PopUser";
 import {
@@ -10,11 +10,13 @@ import {
   UserButton,
   Container,
 } from "./Header.styles";
+import AuthContext from "./../../context/AuthContext";
 
-const Header = ({ user, onLogout }) => {
+const Header = ({ onLogout }) => {
   const [isUserPopupVisible, setUserPopupVisible] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useContext(AuthContext);
 
   const toggleUserPopup = (e) => {
     e.preventDefault();

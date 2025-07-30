@@ -1,32 +1,40 @@
 import { useState, useEffect } from "react";
-import { AuthContext } from "./AuthContext";
-import { checkLs } from "./../utils/checkLs";
+import AuthContext from "./AuthContext";
+import checkLs from "../utils/checkLs";
 
-// Написали обычный реакт-компонент, который принимает всё приложение
-// В виде пропса children
 const AuthProvider = ({ children }) => {
-  // checkLs проверяет лс на наличие ключа userInfo
-  const [user, setUser] = useState(checkLs()); // Здесь будет лежать инфа о юзере
+  const [user, setUser] = useState(() => checkLs());
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // А тут мы проверяем ЛС, когда приложение запускается
-    try {
-      const storedUser = localStorage.getItem("userInfo");
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+    const loadUser = () => {
+      try {
+        const storedUser = localStorage.getItem("userInfo");
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+        }
+      } catch (error) {
+        console.error("Failed to parse user data", error);
+        localStorage.removeItem("userInfo");
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Ошибка при загрузке данных из localStorage:", error);
-    }
+    };
+
+    loadUser();
   }, []);
 
-  // Обновляем данные о пользователе и сохраняем в лс
   const updateUserInfo = (userData) => {
-    setUser(userData);
-    if (userData) {
-      localStorage.setItem("userInfo", JSON.stringify(userData));
-    } else {
-      localStorage.removeItem("userInfo");
+    try {
+      setUser(userData);
+      if (userData) {
+        localStorage.setItem("userInfo", JSON.stringify(userData));
+      } else {
+        localStorage.removeItem("userInfo");
+      }
+    } catch (error) {
+      console.error("Failed to update user info", error);
     }
   };
 
@@ -39,11 +47,18 @@ const AuthProvider = ({ children }) => {
     updateUserInfo(null);
     return true;
   };
-  // В сам провайдер нужно обязательно прокинуть те значения,
-  // которые мы хотим использовать в разных частях приложения
+
+  const contextValue = {
+    user,
+    isLoading,
+    login,
+    logout,
+    updateUserInfo,
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateUserInfo }}>
-      {children}
+    <AuthContext.Provider value={contextValue}>
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 };
