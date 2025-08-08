@@ -51,7 +51,7 @@ const Header = ({ onLogout }) => {
             {user ? (
               <>
                 <ButtonMainNew id="btnMainNew" onClick={handleNewTask}>
-                  Создать новую задачу
+                  Создать задачу
                 </ButtonMainNew>
                 <UserButton href="#user-set-target" onClick={toggleUserPopup}>
                   {user.name || "Пользователь"}
