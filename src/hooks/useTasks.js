@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+/* import { useState, useEffect, useCallback } from "react";
 
 const API_URL = "https://wedev-api.sky.pro/api/kanban";
 
@@ -146,7 +146,6 @@ export const useTasks = () => {
     }
   };
 
-  // Удаление задачи
   const deleteTask = async (taskId) => {
     try {
       setLoading(true);
@@ -190,3 +189,4 @@ export const useTasks = () => {
     deleteTask,
   };
 };
+ */

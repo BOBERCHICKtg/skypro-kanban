@@ -16,8 +16,7 @@ import {
 const Main = ({ tasks, setTasks }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const loadTasks = async () => {
     try {
@@ -39,11 +38,6 @@ const Main = ({ tasks, setTasks }) => {
   const handleCardClick = (task) => {
     setSelectedTask(task);
     setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedTask(null);
   };
 
   const tasksByStatus = {

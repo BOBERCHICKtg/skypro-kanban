@@ -27,13 +27,12 @@ const PopNewCard = ({ setTasks }) => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [activeDate, setActiveDate] = useState(new Date());
+  /*   const [activeDate, setActiveDate] = useState(new Date()); */
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     topic: "Web Design",
-    status: "Без статуса",
-    date: activeDate,
+    date: new Date(),
   });
 
   const handleClose = () => navigate(location.state?.background || "/");
@@ -66,7 +65,7 @@ const PopNewCard = ({ setTasks }) => {
         title: formData.title.trim(),
         description: formData.description.trim(),
         topic: formData.topic,
-        status: formData.status,
+        status: "Без статуса",
         date: formData.date,
       };
 
@@ -119,7 +118,10 @@ const PopNewCard = ({ setTasks }) => {
                 </FormBlock>
               </FormNew>
 
-              <Calendar activeDate={activeDate} onChange={handleDateChange} />
+              <Calendar
+                activeDate={formData.date}
+                onChange={handleDateChange}
+              />
             </PopNewCardWrap>
 
             <CategoriesContainer>
@@ -134,8 +136,8 @@ const PopNewCard = ({ setTasks }) => {
                       topic === "Web Design"
                         ? "orange"
                         : topic === "Research"
-                          ? "green"
-                          : "purple"
+                        ? "green"
+                        : "purple"
                     }
                   >
                     {topic}

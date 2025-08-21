@@ -32,7 +32,6 @@ const ProtectedRoute = ({ isAllowed, redirectPath = "/sign-in", children }) => {
 };
 
 function App() {
-  const [loading, setLoading] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState(null);
@@ -47,7 +46,6 @@ function App() {
       setIsAuth(true);
       setUser(JSON.parse(userData));
     }
-    setLoading(true);
   }, []);
 
   const handleLogout = () => {
@@ -84,7 +82,6 @@ function App() {
           </PopConteiner>
         </PopExit>
 
-        {/* Показываем хедер только если это не страница входа/регистрации */}
         {!isAuthPage && <Header user={user} onLogout={handleLogout} />}
 
         <Routes location={background || location}>

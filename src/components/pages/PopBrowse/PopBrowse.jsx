@@ -63,6 +63,14 @@ const PopBrowse = ({ tasks, onClose }) => {
     setEditedTask((prev) => ({ ...prev, date }));
   };
 
+  const categoryOptions = [...new Set(tasks.map((task) => task.topic))];
+
+  /*   ДОДЕЛАТЬ
+
+const handleDelete = () => {
+
+  } */
+
   if (!task) return null;
 
   const statusOptions = [
@@ -94,16 +102,18 @@ const PopBrowse = ({ tasks, onClose }) => {
                 <p>
                   {isEditMode ? (
                     <select
-                      name="category"
-                      value={editedTask.category}
+                      name="topic"
+                      value={editedTask.topic}
                       onChange={handleChange}
                     >
-                      <option value="Web Design">Web Design</option>
-                      <option value="Research">Research</option>
-                      <option value="Copywriting">Copywriting</option>
+                      {categoryOptions.map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
                     </select>
                   ) : (
-                    task.category
+                    task.topic
                   )}
                 </p>
               </CategoryTheme>
