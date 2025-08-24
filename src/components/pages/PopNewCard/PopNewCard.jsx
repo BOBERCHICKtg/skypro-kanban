@@ -27,7 +27,7 @@ const PopNewCard = ({ setTasks }) => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  /*   const [activeDate, setActiveDate] = useState(new Date()); */
+    const [activeDate, setActiveDate] = useState(new Date()); 
   const [formData, setFormData] = useState({
     title: "",
     description: "",

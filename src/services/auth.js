@@ -3,6 +3,9 @@ import axios from "axios";
 const API_URL = "https://wedev-api.sky.pro/api/user";
 
 export async function signIn({ login, password }) {
+  console.log("Отправка запроса на:", `${API_URL}/login`);
+  console.log("Данные:", { login, password });
+
   try {
     const response = await axios.post(
       `${API_URL}/login`,
@@ -20,6 +23,7 @@ export async function signIn({ login, password }) {
       localStorage.setItem("userToken", response.data.token);
 
       localStorage.setItem("userData", JSON.stringify(response.data.user));
+      localStorage.setItem("userInfo", JSON.stringify(response.data.user));
     }
 
     return response.data;
@@ -44,7 +48,17 @@ export async function signUp(userData) {
 }
 
 export function isAuthenticated() {
-  return !!localStorage.getItem("userToken");
+  const token = localStorage.getItem("userToken");
+  const userData = localStorage.getItem("userData");
+  const userInfo = localStorage.getItem("userInfo");
+
+  console.log("Auth check:", {
+    token,
+    userData: !!userData,
+    userInfo: !!userInfo,
+  });
+
+  return !!token;
 }
 
 export function getToken() {

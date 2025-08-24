@@ -13,10 +13,11 @@ import {
 import AuthContext from "./../../context/AuthContext";
 
 const Header = ({ onLogout }) => {
+  // Убрали user из пропсов
   const [isUserPopupVisible, setUserPopupVisible] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext); // Получаем user из контекста
 
   const toggleUserPopup = (e) => {
     e.preventDefault();
@@ -48,7 +49,7 @@ const Header = ({ onLogout }) => {
             </Link>
           </HeaderLogo>
           <HeaderNav>
-            {user ? (
+            {user ? ( // Используем user из контекста
               <>
                 <ButtonMainNew id="btnMainNew" onClick={handleNewTask}>
                   Создать задачу

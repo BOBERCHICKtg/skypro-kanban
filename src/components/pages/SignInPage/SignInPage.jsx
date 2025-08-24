@@ -55,6 +55,7 @@ const SignInPage = () => {
               placeholder="Логин"
               required
               disabled={isLoading}
+              autoComplete="username"
             />
             <Input
               type="password"
@@ -62,6 +63,7 @@ const SignInPage = () => {
               placeholder="Пароль"
               required
               disabled={isLoading}
+              autoComplete="current-password"
             />
             <ButtonEnter type="submit" disabled={isLoading}>
               {isLoading ? "Вход..." : "Войти"}

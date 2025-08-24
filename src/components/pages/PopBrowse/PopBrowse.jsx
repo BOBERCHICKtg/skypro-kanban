@@ -56,6 +56,7 @@ const PopBrowse = ({ tasks, onClose }) => {
   };
 
   const handleStatusChange = (status) => {
+    console.log("Меняем статус на:", status);
     setEditedTask((prev) => ({ ...prev, status }));
   };
 
@@ -63,7 +64,10 @@ const PopBrowse = ({ tasks, onClose }) => {
     setEditedTask((prev) => ({ ...prev, date }));
   };
 
-  const categoryOptions = [...new Set(tasks.map((task) => task.topic))];
+  const categoryOptions =
+    tasks && tasks.length > 0
+      ? [...new Set(tasks.map((task) => task.topic))]
+      : ["Web Design", "Research", "Copywriting"];
 
   /*   ДОДЕЛАТЬ
 
@@ -186,7 +190,7 @@ const handleDelete = () => {
                     Отменить
                   </Button>
                   <Button $border>Удалить задачу</Button>
-                  <Button $background onClick={onClose}>
+                  <Button $background onClick={onclose}>
                     Закрыть
                   </Button>
                 </>

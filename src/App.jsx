@@ -23,6 +23,7 @@ import SignInPage from "./components/pages/SignInPage/SignInPage";
 import SignUpPage from "./components/pages/SignUpPage/SignUpPage";
 import PopBrowse from "./components/pages/PopBrowse/PopBrowse";
 import PopNewCard from "./components/pages/PopNewCard/PopNewCard";
+import { getToken } from "./services/auth";
 
 const ProtectedRoute = ({ isAllowed, redirectPath = "/sign-in", children }) => {
   if (!isAllowed) {
@@ -90,7 +91,12 @@ function App() {
             element={<SignInPage setIsAuth={setIsAuth} setUser={setUser} />}
           />
           <Route path="/sign-up" element={<SignUpPage />} />
-          <Route path="/pop-browse/:id" element={<PopBrowse tasks={tasks} />} />
+          <Route
+            path="/pop-browse/:id"
+            element={
+              <PopBrowse token={getToken()} onClose={onclose} tasks={tasks} />
+            }
+          />
 
           <Route element={<ProtectedRoute isAllowed={isAuth} />}>
             <Route

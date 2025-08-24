@@ -73,6 +73,7 @@ const SignUpPage = () => {
               placeholder="Логин"
               required
               disabled={isLoading}
+              autoComplete="username"
             />
             <Input
               type="password"
@@ -81,6 +82,7 @@ const SignUpPage = () => {
               required
               minLength="6"
               disabled={isLoading}
+              autoComplete="current-password"
             />
 
             <ButtonSignUp type="submit" disabled={isLoading}>
