@@ -138,6 +138,8 @@ export const StatusTheme = styled.div`
   padding: 11px 14px 10px;
   margin-right: 7px;
   margin-bottom: 7px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 
   p {
     font-size: 14px;
@@ -150,8 +152,20 @@ export const StatusTheme = styled.div`
     color: #ffffff;
   }
 
+  &._active {
+    background: #baeaff;
+    border-color: #0077cc;
+    color: #005599;
+    font-weight: 600;
+  }
+
   &._hide {
     display: none;
+  }
+
+  &:hover {
+    background: #e6f7ff;
+    border-color: #0077cc;
   }
 `;
 
